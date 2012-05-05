@@ -1,0 +1,7 @@
+
+/Lib
+bin/
+obj/
+*.opensdf
+*.sdf
+*.suo

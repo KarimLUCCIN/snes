@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SnesEmulator">
+</Property><Property Name="Solution File" Value="C:\LKSoft\Applications\MS.Net\SnesEmulator\SnesEmulator\SnesEmulator.sln">
+</Property><Property Name="Date" Value="samedi 5 mai 2012">
+</Property><Property Name="Time" Value="23:46:10">
+</Property></Properties><Event ErrorLevel="0" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Converting project file 'C:\LKSoft\Applications\MS.Net\SnesEmulator\Interop.D3DImageEx\Interop.D3DImageEx.vcproj'.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="0" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Done converting to new project file 'C:\LKSoft\Applications\MS.Net\SnesEmulator\Interop.D3DImageEx\Interop.D3DImageEx.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="Interop.D3DImageEx" Source="..\Interop.D3DImageEx\Interop.D3DImageEx.vcproj" Description="Converted">
+</Event></UpgradeLog>
