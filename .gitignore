@@ -5,3 +5,4 @@ obj/
 *.opensdf
 *.sdf
 *.suo
+/References
