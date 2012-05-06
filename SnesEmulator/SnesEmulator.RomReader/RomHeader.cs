@@ -38,6 +38,28 @@ namespace SnesEmulator.RomReader
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct RomNativeModeInterrupts
+    {
+        public ushort COP;
+        public ushort BRK;
+        public ushort ABORT;
+        public ushort NMIVerticalBank;
+        public ushort _Unknown0;
+        public ushort IRQ;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RomEmulationModeInterrupts
+    {
+        public ushort COP;
+        public ushort _Unknown0;
+        public ushort ABORT;
+        public ushort NMIVerticalBank;
+        public ushort RESET;
+        public ushort IRQ_BRK;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct RomHeader
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst=21)]
@@ -98,12 +120,10 @@ namespace SnesEmulator.RomReader
 
         public int _Unknown0;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst=6)]
-        public ushort[] NativeModeInterupts;
+        public RomNativeModeInterrupts NativeModeInterupts;
 
         public int _Unknown1;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public ushort[] EmulationModeInterupts;
+        public RomEmulationModeInterrupts EmulationModeInterupts;
     }
 }
