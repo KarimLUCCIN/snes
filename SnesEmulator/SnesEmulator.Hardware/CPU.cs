@@ -7,7 +7,7 @@ namespace SnesEmulator.Hardware
 {
     public class CPU
     {
-        enum Opcodes
+        public enum Opcodes
         {
             // Loading instructions
             LDA,    // Load into accumulator from memory
@@ -123,7 +123,7 @@ namespace SnesEmulator.Hardware
             XBA     // Exchanges low and high byte of the A register
         }
 
-        enum AddressingModes
+        public enum AddressingModes
         {
             Implied,
             ImmediateMemoryFlag,
