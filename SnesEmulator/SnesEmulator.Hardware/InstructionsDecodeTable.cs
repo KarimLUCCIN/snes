@@ -130,16 +130,16 @@ namespace SnesEmulator.Hardware
                 else
                     p1 = sender.DecodeInt2Argument(bin, ref offset);
             });
-            KnownInstructions[0x2D] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.Absolute, (sender, a, b) => { }, ArgumentType.I1);
-            KnownInstructions[0x2F] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteLong, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x2D] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.Absolute, (sender, a, b) => { }, ArgumentType.I2);
+            KnownInstructions[0x2F] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteLong, (sender, a, b) => { }, ArgumentType.I3);
             KnownInstructions[0x31] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndirectIndexed, (sender, a, b) => { }, ArgumentType.I1);
             KnownInstructions[0x32] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndirect, (sender, a, b) => { }, ArgumentType.I1);
             KnownInstructions[0x33] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.StackRelativeIndirectIndexed, (sender, a, b) => { }, ArgumentType.I1);
             KnownInstructions[0x35] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndexedX, (sender, a, b) => { }, ArgumentType.I1);
             KnownInstructions[0x37] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndirectIndexedLong, (sender, a, b) => { }, ArgumentType.I1);
-            KnownInstructions[0x39] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedY, (sender, a, b) => { }, ArgumentType.I1);
-            KnownInstructions[0x3D] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedX, (sender, a, b) => { }, ArgumentType.I1);
-            KnownInstructions[0x3F] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedLong, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x39] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedY, (sender, a, b) => { }, ArgumentType.I2);
+            KnownInstructions[0x3D] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedX, (sender, a, b) => { }, ArgumentType.I2);
+            KnownInstructions[0x3F] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedLong, (sender, a, b) => { }, ArgumentType.I3);
 
             // JMP
             KnownInstructions[0x4c] = new InstructionJMP(cpu, Hardware.CPU.AddressingModes.Absolute);
