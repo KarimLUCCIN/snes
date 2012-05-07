@@ -105,13 +105,13 @@ namespace SnesEmulator.Hardware.Instructions
 
         public abstract void Run(int arg1, int arg2);
 
-        protected virtual byte DecodeByteArgument(MemoryBin bin, ref int offset)
+        public byte DecodeByteArgument(MemoryBin bin, ref int offset)
         {
             offset++;
             return (byte)bin.ReadByte(offset-1);
         }
 
-        protected virtual short DecodeInt2Argument(MemoryBin bin, ref int offset)
+        public short DecodeInt2Argument(MemoryBin bin, ref int offset)
         {
             byte low, high;
             low = (byte)bin.ReadByte(offset);
@@ -122,7 +122,7 @@ namespace SnesEmulator.Hardware.Instructions
             return (short)(low | high << 8);
         }
 
-        protected virtual int DecodeInt3Argument(MemoryBin bin, ref int offset)
+        public int DecodeInt3Argument(MemoryBin bin, ref int offset)
         {
             byte a, b, c;
             a = (byte)bin.ReadByte(offset);

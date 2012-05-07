@@ -40,6 +40,64 @@ namespace SnesEmulator.Hardware
             }
         }
 
+        public enum ArgumentType : byte
+        {
+            None,
+            I1,
+            I2,
+            I3
+        }
+
+        public Instruction GenericInstCustom(CPU.Opcodes code, CPU.AddressingModes addrMode, Action<GenericInstruction, int, int> exec, GenericInstruction.DecodeArgumentsFunctionDelegate decodeDelegate = null)
+        {
+            return new GenericInstruction(cpu, code, addrMode, decodeDelegate != null) { runFunction = exec, decodeArgumentsFunction = decodeDelegate };
+        }
+
+        public Instruction GenericInst(CPU.Opcodes code, CPU.AddressingModes addrMode, Action<GenericInstruction, int, int> exec, ArgumentType param1type = ArgumentType.None, ArgumentType param2type = ArgumentType.None)
+        {
+            var inst = new GenericInstruction(cpu, code, addrMode, param1type != ArgumentType.None) { runFunction = exec };
+
+            if (param1type != ArgumentType.None)
+            {
+                inst.decodeArgumentsFunction = delegate(GenericInstruction sender, Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref int param1, ref int param2)
+                {
+                    switch (param1type)
+                    {
+                        case ArgumentType.None:
+                            break;
+                        default:
+                        case ArgumentType.I1:
+                            param1 = inst.DecodeByteArgument(bin, ref offset);
+                            break;
+                        case ArgumentType.I2:
+                            param1 = inst.DecodeInt2Argument(bin, ref offset);
+                            break;
+                        case ArgumentType.I3:
+                            param1 = inst.DecodeInt3Argument(bin, ref offset);
+                            break;
+                    }
+
+                    switch (param2type)
+                    {
+                        case ArgumentType.None:
+                            break;
+                        default:
+                        case ArgumentType.I1:
+                            param2 = inst.DecodeByteArgument(bin, ref offset);
+                            break;
+                        case ArgumentType.I2:
+                            param2 = inst.DecodeInt2Argument(bin, ref offset);
+                            break;
+                        case ArgumentType.I3:
+                            param2 = inst.DecodeInt3Argument(bin, ref offset);
+                            break;
+                    }
+                };
+            }
+
+            return inst;
+        }
+
         private void LoadKnownInstructions()
         {
             // ADC
@@ -58,6 +116,30 @@ namespace SnesEmulator.Hardware
             KnownInstructions[0x79] = new InstructionADC(cpu, Hardware.CPU.AddressingModes.AbsoluteIndexedY);
             KnownInstructions[0x7D] = new InstructionADC(cpu, Hardware.CPU.AddressingModes.AbsoluteIndexedX);
             KnownInstructions[0x7F] = new InstructionADC(cpu, Hardware.CPU.AddressingModes.AbsoluteIndexedLong);
+
+            // AND
+            KnownInstructions[0x21] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndexedIndirect, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x23] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.StackRelative, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x25] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.Direct, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x27] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndirectLong, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x29] = GenericInstCustom(CPU.Opcodes.AND, CPU.AddressingModes.ImmediateMemoryFlag, (sender, a, b) => { },
+                (GenericInstruction.DecodeArgumentsFunctionDelegate)delegate(GenericInstruction sender, Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref int p1, ref int p2)
+            {
+                if (mode == MFlagMode.Mode16Bits)
+                    p1 = sender.DecodeInt3Argument(bin, ref offset);
+                else
+                    p1 = sender.DecodeInt2Argument(bin, ref offset);
+            });
+            KnownInstructions[0x2D] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.Absolute, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x2F] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteLong, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x31] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndirectIndexed, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x32] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndirect, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x33] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.StackRelativeIndirectIndexed, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x35] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndexedX, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x37] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.DirectIndirectIndexedLong, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x39] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedY, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x3D] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedX, (sender, a, b) => { }, ArgumentType.I1);
+            KnownInstructions[0x3F] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedLong, (sender, a, b) => { }, ArgumentType.I1);
 
             // JMP
             KnownInstructions[0x4c] = new InstructionJMP(cpu, Hardware.CPU.AddressingModes.Absolute);
@@ -82,7 +164,16 @@ namespace SnesEmulator.Hardware
             KnownInstructions[0x00] = new InstructionBRK(cpu);
 
             // NOP
-            KnownInstructions[0xea] = new InstructionNOP(cpu);
+            KnownInstructions[0xEA] = new InstructionNOP(cpu);
+
+            // SEI
+            KnownInstructions[0x78] = GenericInst(Hardware.CPU.Opcodes.SEI, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+
+            // TYX
+            KnownInstructions[0xBB] = GenericInst(Hardware.CPU.Opcodes.TYX, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+
+            // WAI
+            KnownInstructions[0xCB] = GenericInst(Hardware.CPU.Opcodes.WAI, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
 
             // WDM (not used)
             KnownInstructions[0x42] = new InstructionWDM(cpu);
