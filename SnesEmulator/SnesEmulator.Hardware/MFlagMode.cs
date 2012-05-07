@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SnesEmulator.Hardware
 {
-    public enum CPUMode : byte
+    public enum MFlagMode : byte
     {
-        Native,
-        Emulation
+        Mode8Bits,
+        Mode16Bits
     }
 }

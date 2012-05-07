@@ -24,7 +24,7 @@ namespace SnesEmulator.Hardware.Instructions
 
         public string StringRepresentation()
         {
-            return String.Format("{0} \t-- {1}\t\t;", offset.ToString("X8"), instruction.StringRepresentation(param1, param2));
+            return String.Format("#{0} \t-- {1}", offset.ToString("X8"), instruction.StringRepresentation(param1, param2));
         }
     }
 }

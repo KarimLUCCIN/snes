@@ -8,9 +8,9 @@ namespace SnesEmulator.Hardware.Instructions
 {
     public class InstructionsBin
     {
-        private CPUMode decodeMode;
+        private MFlagMode decodeMode;
 
-        public CPUMode DecodeMode
+        public MFlagMode DecodeMode
         {
             get { return decodeMode; }
             set { decodeMode = value; }

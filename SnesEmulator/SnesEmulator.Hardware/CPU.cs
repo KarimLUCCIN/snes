@@ -79,7 +79,7 @@ namespace SnesEmulator.Hardware
             PLP,    // Pull Processor Status Flags
             PLX,    // Pull X
             PLY,    // Pull Y
-                
+
             // Bitwise instructions
             AND,    // AND Accumulator with Memory
             ASL,    // Left Shift Accumulator or Memory
@@ -123,7 +123,9 @@ namespace SnesEmulator.Hardware
             NOP,    // No operation (does absolutely nothing except waste a cycle of processing time)
             STP,    // Stop the Clock (freezes the SNES's processor)
             WAI,    // Wait for Interrupt
-            XBA     // Exchanges low and high byte of the A register
+            XBA,     // Exchanges low and high byte of the A register
+            
+            WDM     //Reserved for future use
         }
 
         public enum AddressingModes

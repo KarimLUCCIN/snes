@@ -105,6 +105,35 @@ namespace SnesEmulator.Hardware.Instructions
 
         public abstract void Run(int arg1, int arg2);
 
+        protected virtual byte DecodeByteArgument(MemoryBin bin, ref int offset)
+        {
+            offset++;
+            return (byte)bin.ReadByte(offset-1);
+        }
+
+        protected virtual short DecodeInt2Argument(MemoryBin bin, ref int offset)
+        {
+            byte low, high;
+            low = (byte)bin.ReadByte(offset);
+            high = (byte)bin.ReadByte(offset + 1);
+
+            offset += 2;
+
+            return (short)(low | high << 8);
+        }
+
+        protected virtual int DecodeInt3Argument(MemoryBin bin, ref int offset)
+        {
+            byte a, b, c;
+            a = (byte)bin.ReadByte(offset);
+            b = (byte)bin.ReadByte(offset + 1);
+            c = (byte)bin.ReadByte(offset + 2);
+
+            offset += 3;
+
+            return (int)(a | b << 8 | c << 16);
+        }
+
         /// <summary>
         /// Décode les arguments nécessaires pour l'instruction
         /// </summary>
@@ -112,6 +141,6 @@ namespace SnesEmulator.Hardware.Instructions
         /// <param name="mode"></param>
         /// <param name="offset"></param>
         /// <param name="instructionReference"></param>
-        public abstract void DecodeArguments(MemoryBin bin, CPUMode mode, ref int offset, ref InstructionReference instructionReference);
+        public abstract void DecodeArguments(MemoryBin bin, MFlagMode mode, ref int offset, ref InstructionReference instructionReference);
     }
 }

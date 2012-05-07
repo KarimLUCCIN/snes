@@ -34,7 +34,7 @@ namespace SnesEmulator.Hardware.Instructions
         /// <param name="offset"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public InstructionsBin Decode(MemoryBin bin, int offset, CPUMode mode)
+        public InstructionsBin Decode(MemoryBin bin, int offset, MFlagMode mode)
         {
             var decodeResult = new List<InstructionReference>();
             var length = bin.Length;
