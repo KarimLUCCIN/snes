@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnesEmulator.Renderer", "Sn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnesEmulator.RomReader", "SnesEmulator.RomReader\SnesEmulator.RomReader.csproj", "{1EF880CE-8E81-4283-B3C1-3D13E73B88D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnesEmulator.Hardware", "SnesEmulator.Hardware\SnesEmulator.Hardware.csproj", "{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{1EF880CE-8E81-4283-B3C1-3D13E73B88D8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1EF880CE-8E81-4283-B3C1-3D13E73B88D8}.Release|Win32.ActiveCfg = Release|Any CPU
 		{1EF880CE-8E81-4283-B3C1-3D13E73B88D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|Win32.ActiveCfg = Release|Any CPU
+		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
