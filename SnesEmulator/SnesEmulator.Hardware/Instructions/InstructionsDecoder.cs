@@ -50,8 +50,11 @@ namespace SnesEmulator.Hardware.Instructions
 
                 var match = insTable[code];
 
-                var instructionReference = match.Decode(bin, mode, ref offset);
+                var instructionReference = new InstructionReference();
+                instructionReference.instruction = match;
                 instructionReference.offset = originalOffset;
+
+                match.DecodeArguments(bin, mode, ref offset, ref instructionReference);
 
                 decodeResult.Add(instructionReference);
             }

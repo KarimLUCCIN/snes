@@ -12,6 +12,11 @@ namespace SnesEmulator.Hardware.Memory
     {
         public byte[] Data;
 
+        public int Length
+        {
+            get { return Data.Length; }
+        }
+
         /// <summary>
         /// Crée un nouveau conteneur de mémoire à partir d'un contenu existant
         /// </summary>

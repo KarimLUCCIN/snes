@@ -39,7 +39,7 @@ namespace SnesEmulator.Hardware.Memory
 
             this.container = container;
 
-            if (start <= 0 || start >= container.Data.Length)
+            if (start < 0 || start >= container.Data.Length)
                 throw new ArgumentOutOfRangeException("start");
 
             this.start = start;

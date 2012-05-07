@@ -76,14 +76,14 @@ namespace SnesEmulator.RomReader
 
         public byte ROMSizeByte;
 
-        public long TranslatedROMSizeByte
+        public int TranslatedROMSizeByte
         {
             get { return ConvertSize(ROMSizeByte); }
         }
 
         public byte RAMSizeByte;
 
-        public long TranslatedRAMSizeByte
+        public int TranslatedRAMSizeByte
         {
             get { return ConvertSize(RAMSizeByte); }
         }

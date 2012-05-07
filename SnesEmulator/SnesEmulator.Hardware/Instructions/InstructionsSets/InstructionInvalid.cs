@@ -40,9 +40,9 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             throw new InvalidProgramException(String.Format("Instruction non reconnue : {0}", hexa.ToString("x")));
         }
 
-        public override InstructionReference Decode(Memory.MemoryBin bin, CPUMode mode, ref int offset)
+        public override void DecodeArguments(Memory.MemoryBin bin, CPUMode mode, ref int offset, ref InstructionReference instructionReference)
         {
-            return new InstructionReference() { instruction = this };
+            /* No Args */
         }
     }
 }

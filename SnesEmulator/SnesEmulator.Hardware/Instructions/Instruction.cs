@@ -105,6 +105,13 @@ namespace SnesEmulator.Hardware.Instructions
 
         public abstract void Run(int arg1, int arg2);
 
-        public abstract InstructionReference Decode(MemoryBin bin, CPUMode mode, ref int offset);
+        /// <summary>
+        /// Décode les arguments nécessaires pour l'instruction
+        /// </summary>
+        /// <param name="bin"></param>
+        /// <param name="mode"></param>
+        /// <param name="offset"></param>
+        /// <param name="instructionReference"></param>
+        public abstract void DecodeArguments(MemoryBin bin, CPUMode mode, ref int offset, ref InstructionReference instructionReference);
     }
 }

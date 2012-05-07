@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using SnesEmulator.RomReader;
 using System.Diagnostics;
 using System.Reflection;
+using SnesEmulator.Hardware;
 
 namespace SnesEmulator
 {
@@ -29,12 +30,28 @@ namespace SnesEmulator
             using (var strm = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Super Mario All-Stars.smc",
                 System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
+                int romSize, ramSize;
+
                 bool hasHeader = true;
-                strm.Position = hasHeader ? RomHeaderConstants.HeaderedLoROM : RomHeaderConstants.HeaderLessLoROM;
+                var headerPosition = hasHeader ? RomHeaderConstants.HeaderedLoROM : RomHeaderConstants.HeaderLessLoROM;
 
-                var header = (RomHeader)SnesEmulator.RomReader.StructGetter.ReadBlock(strm, typeof(RomHeader));
+                Loader.GetROMParameters(strm, 0, headerPosition, out romSize, out ramSize);
 
-                strm.Position = header.EmulationModeInterupts.RESET + (hasHeader ? 512 : 0);
+                var snes = new SnesPlatform(romSize + ramSize);
+
+                var romBin = Loader.LoadInto(strm, 0, headerPosition, snes.Memory, 0);
+
+                using (var decodeOut = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\decode.txt",
+                    System.IO.FileMode.Create))
+                {
+                    using(var wr = new System.IO.StreamWriter(decodeOut))
+                    {
+                        snes.Decoder.Decode(romBin, 0, CPUMode.Emulation).Print(wr);
+
+                        wr.Flush();
+                        decodeOut.Flush();
+                    }
+                }
 
                 //while (strm.Position < strm.Length - 1000)
                 //    MiniDecode(strm);

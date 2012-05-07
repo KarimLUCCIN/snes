@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Loader.cs" />
     <Compile Include="RomHeader.cs" />
     <Compile Include="StructGetter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
