@@ -98,6 +98,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="SnesEmulator.Hardware\SnesEmulator.Hardware.csproj">
+      <Project>{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}</Project>
+      <Name>SnesEmulator.Hardware</Name>
+    </ProjectReference>
     <ProjectReference Include="SnesEmulator.Renderer\SnesEmulator.Renderer.csproj">
       <Project>{D769B293-D410-429F-9458-47DAE3325732}</Project>
       <Name>SnesEmulator.Renderer</Name>

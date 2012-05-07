@@ -9,6 +9,9 @@ namespace SnesEmulator.Hardware
     {
         public enum Opcodes
         {
+            // Invalid instruction (debug)
+            INVALID,
+
             // Loading instructions
             LDA,    // Load into accumulator from memory
             LDX, 	// Load into X from memory
@@ -169,8 +172,12 @@ namespace SnesEmulator.Hardware
 
         public byte[][] Instructions { get; private set; }
 
+        public InstructionsDecodeTable DecodeTable { get; private set; }
+
         public CPU()
         {
+            DecodeTable = new InstructionsDecodeTable(this);
+
             Instructions = new byte[][]
             {
                 //           IMP,  IMF,  IIF,  I8B,  REL,  RELL, DIR,  DIX,  DIY,  DI,   INX,  INY,  DIL,  DIIL, ABS,  AIX,  AIY,  ABSL, AIL,  SR,   SRII, ABSI, AIL,  AII,  IACC, BM

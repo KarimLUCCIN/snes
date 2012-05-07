@@ -44,6 +44,12 @@
     <Compile Include="StructGetter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SnesEmulator.Hardware\SnesEmulator.Hardware.csproj">
+      <Project>{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}</Project>
+      <Name>SnesEmulator.Hardware</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

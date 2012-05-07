@@ -41,7 +41,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CPU.cs" />
+    <Compile Include="CPUMode.cs" />
+    <Compile Include="InstructionsDecodeTable.cs" />
     <Compile Include="Instructions\Instruction.cs" />
+    <Compile Include="Instructions\InstructionReference.cs" />
+    <Compile Include="Instructions\InstructionsBin.cs" />
+    <Compile Include="Instructions\InstructionsDecoder.cs" />
+    <Compile Include="Instructions\InstructionsSets\InstructionInvalid.cs" />
+    <Compile Include="Memory\MemoryBin.cs" />
+    <Compile Include="Memory\MemoryContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
