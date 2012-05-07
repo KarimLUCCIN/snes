@@ -141,6 +141,52 @@ namespace SnesEmulator.Hardware
             KnownInstructions[0x3D] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedX, (sender, a, b) => { }, ArgumentType.I2);
             KnownInstructions[0x3F] = GenericInst(CPU.Opcodes.AND, CPU.AddressingModes.AbsoluteIndexedLong, (sender, a, b) => { }, ArgumentType.I3);
 
+            // ASL
+            KnownInstructions[0x06] = GenericInst(Hardware.CPU.Opcodes.ASL, Hardware.CPU.AddressingModes.Direct, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x0A] = GenericInst(Hardware.CPU.Opcodes.ASL, Hardware.CPU.AddressingModes.ImpliedAccumulator, (sender, p1, p2) => { });
+            KnownInstructions[0x0E] = GenericInst(Hardware.CPU.Opcodes.ASL, Hardware.CPU.AddressingModes.Absolute, (sender, p1, p2) => { }, ArgumentType.I2);
+            KnownInstructions[0x16] = GenericInst(Hardware.CPU.Opcodes.ASL, Hardware.CPU.AddressingModes.DirectIndexedX, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x1E] = GenericInst(Hardware.CPU.Opcodes.ASL, Hardware.CPU.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { }, ArgumentType.I2);
+
+            // BRANCH (1)
+            KnownInstructions[0x90] = GenericInst(Hardware.CPU.Opcodes.BCC, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0xB0] = GenericInst(Hardware.CPU.Opcodes.BCS, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0xF0] = GenericInst(Hardware.CPU.Opcodes.BEQ, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+
+            // TESTS
+            KnownInstructions[0x24] = GenericInst(Hardware.CPU.Opcodes.BIT, Hardware.CPU.AddressingModes.Direct, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x2C] = GenericInst(Hardware.CPU.Opcodes.BIT, Hardware.CPU.AddressingModes.Absolute, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x34] = GenericInst(Hardware.CPU.Opcodes.BIT, Hardware.CPU.AddressingModes.DirectIndexedX, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x3C] = GenericInst(Hardware.CPU.Opcodes.BIT, Hardware.CPU.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x89] = GenericInstCustom(CPU.Opcodes.BIT, CPU.AddressingModes.ImmediateMemoryFlag, (sender, a, b) => { },
+                (GenericInstruction.DecodeArgumentsFunctionDelegate)delegate(GenericInstruction sender, Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref int p1, ref int p2)
+                {
+                    if (mode == MFlagMode.Mode16Bits)
+                        p1 = sender.DecodeInt3Argument(bin, ref offset);
+                    else
+                        p1 = sender.DecodeInt2Argument(bin, ref offset);
+                });
+
+            // BRANCH (2)
+            KnownInstructions[0x30] = GenericInst(Hardware.CPU.Opcodes.BMI, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0xD0] = GenericInst(Hardware.CPU.Opcodes.BNE, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x10] = GenericInst(Hardware.CPU.Opcodes.BPL, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x80] = GenericInst(Hardware.CPU.Opcodes.BRA, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+
+            // BRK
+            KnownInstructions[0x00] = new InstructionBRK(cpu);
+
+            // BRANCH (3)
+            KnownInstructions[0x82] = GenericInst(Hardware.CPU.Opcodes.BRL, Hardware.CPU.AddressingModes.RelativeLong, (sender, p1, p2) => { }, ArgumentType.I2);
+            KnownInstructions[0x50] = GenericInst(Hardware.CPU.Opcodes.BVC, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x70] = GenericInst(Hardware.CPU.Opcodes.BVS, Hardware.CPU.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1);
+          
+            // CLEAR
+            KnownInstructions[0x18] = GenericInst(Hardware.CPU.Opcodes.CLC, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+            KnownInstructions[0xD8] = GenericInst(Hardware.CPU.Opcodes.CLD, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+            KnownInstructions[0x58] = GenericInst(Hardware.CPU.Opcodes.CLI, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+            KnownInstructions[0xB8] = GenericInst(Hardware.CPU.Opcodes.CLV, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+
             // JMP
             KnownInstructions[0x4c] = new InstructionJMP(cpu, Hardware.CPU.AddressingModes.Absolute);
             KnownInstructions[0x5c] = new InstructionJMP(cpu, Hardware.CPU.AddressingModes.AbsoluteLong);
@@ -159,15 +205,40 @@ namespace SnesEmulator.Hardware
             KnownInstructions[0x08] = new InstructionPush(cpu, InstructionPush.PushType.PHP);
             KnownInstructions[0xDA] = new InstructionPush(cpu, InstructionPush.PushType.PHX);
             KnownInstructions[0x5A] = new InstructionPush(cpu, InstructionPush.PushType.PHY);
-
-            // BRK
-            KnownInstructions[0x00] = new InstructionBRK(cpu);
-
+            
             // NOP
             KnownInstructions[0xEA] = new InstructionNOP(cpu);
+           
+            // SEC
+            KnownInstructions[0x38] = GenericInst(Hardware.CPU.Opcodes.SEC, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+
+            // SED
+            KnownInstructions[0xF8] = GenericInst(Hardware.CPU.Opcodes.SED, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
 
             // SEI
             KnownInstructions[0x78] = GenericInst(Hardware.CPU.Opcodes.SEI, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+
+            // TSB
+            KnownInstructions[0x04] = GenericInst(Hardware.CPU.Opcodes.TSB, Hardware.CPU.AddressingModes.Direct, (sender, p1, p2) => { }, ArgumentType.I1);
+            KnownInstructions[0x0C] = GenericInst(Hardware.CPU.Opcodes.TSB, Hardware.CPU.AddressingModes.Absolute, (sender, p1, p2) => { }, ArgumentType.I2);
+
+            // TSC
+            KnownInstructions[0x3B] = GenericInst(Hardware.CPU.Opcodes.TSC, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+
+            // TSX
+            KnownInstructions[0xBA] = GenericInst(Hardware.CPU.Opcodes.TSX, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+
+            // TXA
+            KnownInstructions[0x8A] = GenericInst(Hardware.CPU.Opcodes.TXA, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+                      
+            // TXS
+            KnownInstructions[0x9A] = GenericInst(Hardware.CPU.Opcodes.TXS, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+           
+            // TXY
+            KnownInstructions[0x9B] = GenericInst(Hardware.CPU.Opcodes.TXY, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
+            
+            // TYA
+            KnownInstructions[0x98] = GenericInst(Hardware.CPU.Opcodes.TYA, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
 
             // TYX
             KnownInstructions[0xBB] = GenericInst(Hardware.CPU.Opcodes.TYX, Hardware.CPU.AddressingModes.Implied, (sender, p1, p2) => { });
