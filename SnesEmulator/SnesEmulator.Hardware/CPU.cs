@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SnesEmulator.Hardware.Memory;
 
 namespace SnesEmulator.Hardware
 {
@@ -157,58 +158,55 @@ namespace SnesEmulator.Hardware
             ImpliedAccumulator,
             BlockMove
         };
+        
+        #region Registers
 
-        enum Flags
+        public int ACC { get; set; }
+        public int SP { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        #endregion
+
+        #region Flags
+
+        public bool Negative { get; private set; }
+        public bool Zero { get; private set; }
+        public bool Overflow { get; private set; }
+        public bool Carry { get; private set; }
+
+        public void SetNegativeFlag(int value)
         {
-            Negative,
-            Overflow,
-            Zero,
-            Carry,
-            Decimal,
-            IRQDisable,
-            IndexRegisterSize, // Native mode only
-            AccumulatorRegisterSize, // Native mode only
-            EmulationMode,
-            Break // Emulation mode only
-        };
+            // Vérifier selon le mode ...
+        }
 
-        public byte[][] Instructions { get; private set; }
+        public void SetZeroFlag(int value)
+        {
+            Negative = value == 0 ? true : false;
+        }
+
+        public void SetOverflowFlag(int value)
+        {
+            // Vérifier selon le mode ...
+        }
+
+        public void SetCarryFlag(int value)
+        {
+            // Vérifier selon le mode ...
+        }
+
+        #endregion
 
         public InstructionsDecodeTable DecodeTable { get; private set; }
 
-        public CPU()
+        public MemoryBin RAM { get; private set; }
+
+        public CPU(MemoryBin RAM)
         {
+            this.RAM = RAM;
+            ACC = X = Y = 0x00;
             DecodeTable = new InstructionsDecodeTable(this);
 
-            Instructions = new byte[][]
-            {
-                //           IMP,  IMF,  IIF,  I8B,  REL,  RELL, DIR,  DIX,  DIY,  DI,   INX,  INY,  DIL,  DIIL, ABS,  AIX,  AIY,  ABSL, AIL,  SR,   SRII, ABSI, AIL,  AII,  IACC, BM
-      /* LDA */ new byte[] { 0x00, 0xA9, 0x00, 0x00, 0x00, 0x00, 0xA5, 0xB5, 0x00, 0xB2, 0xA1, 0xB1, 0xA7, 0xB7, 0xAD, 0xBD, 0xB9, 0xAF, 0xBF, 0xA3, 0xB3, 0x00, 0x00, 0x00, 0x00, 0x00 },
-      /* LDX */ new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-                // A continuer avec tous les opcodes...
-            };
-
-        }
-
-        private void Push(byte value)
-        {
-        }
-
-        private byte Pop()
-        {
-            return 0;
-        }
-
-        private void Fetch()
-        {
-        }
-
-        private void Decode()
-        {
-        }
-
-        private void Execute()
-        {
         }
     }
 }

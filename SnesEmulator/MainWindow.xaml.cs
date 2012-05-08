@@ -37,7 +37,7 @@ namespace SnesEmulator
 
                 Loader.GetROMParameters(strm, 0, headerPosition, out romSize, out ramSize);
 
-                var snes = new SnesPlatform(romSize + ramSize);
+                var snes = new SnesPlatform(romSize, ramSize);
 
                 var romBin = Loader.LoadInto(strm, 0, headerPosition, snes.Memory, 0);
 

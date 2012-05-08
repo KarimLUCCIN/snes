@@ -42,16 +42,17 @@ namespace SnesEmulator.Hardware
         /// <summary>
         /// Crée une nouvelle instance de SNES
         /// </summary>
-        public SnesPlatform(int memorySize)
+        public SnesPlatform(int romSize, int ramSize)
         {
-            cpu = new CPU();
-            decoder = new InstructionsDecoder(cpu);
-
+            int memorySize = romSize + ramSize;
             //on ne peut pas addresser plus de 64 Mo toute façon ..
             if (memorySize < 0 || memorySize > 64 * 1024 * 1024)
                 throw new ArgumentOutOfRangeException("memorySize");
 
             memory = new MemoryContainer(memorySize);
+
+            cpu = new CPU(new MemoryBin(memory, romSize, ramSize));
+            decoder = new InstructionsDecoder(cpu);
         }
     }
 }

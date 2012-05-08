@@ -20,7 +20,29 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 
         public override void Run(int arg1, int arg2)
         {
-            throw new NotImplementedException();
+            switch (AddrMode)
+            {
+                case CPU.AddressingModes.DirectIndexedIndirect:
+                    {
+                        int address = CPU.RAM.ReadByte(arg1 + CPU.X);
+                        int value = CPU.RAM.ReadByte(address);
+                        if (CPU.Carry)
+                            value++;
+                        CPU.ACC += value;
+                        CPU.SetCarryFlag(CPU.ACC);
+                        CPU.SetOverflowFlag(CPU.ACC);
+                        if (CPU.ACC > 255) // A modifier selon le mode...
+                            CPU.ACC = CPU.ACC - 256;
+                        CPU.SetZeroFlag(CPU.ACC);
+                        CPU.SetNegativeFlag(CPU.ACC);
+                        break;
+                    }
+
+                default:
+                    {
+                        break;
+                    }
+            }
         }
 
         public override void DecodeArguments(Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref InstructionReference instructionReference)
