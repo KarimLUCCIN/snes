@@ -26,13 +26,21 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                     {
                         int address = CPU.RAM.ReadByte(arg1 + CPU.X);
                         int value = CPU.RAM.ReadByte(address);
-                        if (CPU.Carry)
+                        if (CPU.CarryFlag)
                             value++;
                         CPU.ACC += value;
                         CPU.SetCarryFlag(CPU.ACC);
                         CPU.SetOverflowFlag(CPU.ACC);
-                        if (CPU.ACC > 255) // A modifier selon le mode...
-                            CPU.ACC = CPU.ACC - 256;
+                        if (CPU.MFlag)
+                        {
+                            if (CPU.ACC > Mode8Bits.Max)
+                                CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
+                        }
+                        else
+                        {
+                            if (CPU.ACC > Mode16Bits.Max)
+                                CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
+                        }
                         CPU.SetZeroFlag(CPU.ACC);
                         CPU.SetNegativeFlag(CPU.ACC);
                         break;

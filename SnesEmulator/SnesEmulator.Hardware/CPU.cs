@@ -170,29 +170,40 @@ namespace SnesEmulator.Hardware
 
         #region Flags
 
-        public bool Negative { get; private set; }
-        public bool Zero { get; private set; }
-        public bool Overflow { get; private set; }
-        public bool Carry { get; private set; }
+        public bool NegativeFlag { get; private set; }
+        public bool ZeroFlag { get; private set; }
+        public bool OverflowFlag { get; private set; }
+        public bool CarryFlag { get; private set; }
+        public bool MFlag { get; set; }
+        public bool XFlag { get; set; }
 
         public void SetNegativeFlag(int value)
         {
-            // Vérifier selon le mode ...
+            if (MFlag)
+                NegativeFlag = value > 127 ? true : false;
+            else
+                NegativeFlag = value > 32767 ? true : false;
         }
 
         public void SetZeroFlag(int value)
         {
-            Negative = value == 0 ? true : false;
+            ZeroFlag = value == 0 ? true : false;
         }
 
         public void SetOverflowFlag(int value)
         {
-            // Vérifier selon le mode ...
+            if (MFlag)
+                OverflowFlag = value > Mode8Bits.Max ? true : false;
+            else
+                OverflowFlag = value > Mode16Bits.Max ? true : false;
         }
 
         public void SetCarryFlag(int value)
         {
-            // Vérifier selon le mode ...
+            if (MFlag)
+                CarryFlag = value > Mode8Bits.Max ? true : false;
+            else
+                CarryFlag = value > Mode16Bits.Max ? true : false;
         }
 
         #endregion
@@ -205,8 +216,8 @@ namespace SnesEmulator.Hardware
         {
             this.RAM = RAM;
             ACC = X = Y = 0x00;
+            MFlag = XFlag = true;
             DecodeTable = new InstructionsDecodeTable(this);
-
         }
     }
 }
