@@ -20,37 +20,90 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 
         public override void Run(int arg1, int arg2)
         {
+            int value = 0;
             switch (AddrMode)
             {
                 case CPU.AddressingModes.DirectIndexedIndirect:
                     {
                         int address = CPU.RAM.ReadByte(arg1 + CPU.X);
-                        int value = CPU.RAM.ReadByte(address);
-                        if (CPU.CarryFlag)
-                            value++;
-                        CPU.ACC += value;
-                        CPU.SetCarryFlag(CPU.ACC);
-                        CPU.SetOverflowFlag(CPU.ACC);
-                        if (CPU.MFlag)
-                        {
-                            if (CPU.ACC > Mode8Bits.Max)
-                                CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
-                        }
-                        else
-                        {
-                            if (CPU.ACC > Mode16Bits.Max)
-                                CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
-                        }
-                        CPU.SetZeroFlag(CPU.ACC);
-                        CPU.SetNegativeFlag(CPU.ACC);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
+                case CPU.AddressingModes.StackRelative:
+                    {
+                        break;
+                    }
+                case CPU.AddressingModes.Direct:
+                    {
+                        int address = CPU.RAM.ReadByte(arg1);
+                        value = CPU.RAM.ReadByte(address);
+                        break;
+                    }
+                case CPU.AddressingModes.DirectIndirectLong:
+                    {
+                        break;
+                    }
+                case CPU.AddressingModes.ImmediateMemoryFlag:
+                case CPU.AddressingModes.ImmediateIndexFlag:
+                case CPU.AddressingModes.Immediate8Bit:
+                    {
+                        value = arg1;
+                        break;
+                    }
+                case CPU.AddressingModes.Absolute:
+                    {
+                        int address = CPU.RAM.ReadByte(arg1);
+                        value = CPU.RAM.ReadByte(address);
+                        break;
+                    }
+                case CPU.AddressingModes.AbsoluteLong:
+                    {
+                        break;
+                    }
+                case CPU.AddressingModes.DirectIndirectIndexed:
+                    {
+                        break;
+                    }
+                case CPU.AddressingModes.DirectIndirect:
+                    {
+                        break;
+                    }
+                case CPU.AddressingModes.StackRelativeIndirectIndexed:
+                    {
+                        break;
+                    }
+                case CPU.AddressingModes.DirectIndexedX:
+                    {
 
+                        break;
+                    }
+                case CPU.AddressingModes.DirectIndirectIndexedLong:
+                    {
+                        break;
+                    }
+                case CPU.AddressingModes.AbsoluteIndexedX:
+                    {
+                        int address = CPU.RAM.ReadByte(arg1 + CPU.X);
+                        value = CPU.RAM.ReadByte(address);
+                        break;
+                    }
+                case CPU.AddressingModes.AbsoluteIndexedY:
+                    {
+                        int address = CPU.RAM.ReadByte(arg1 + CPU.Y);
+                        value = CPU.RAM.ReadByte(address);
+                        break;
+                    }
+                case CPU.AddressingModes.AbsoluteIndexedLong:
+                    {
+                        break;
+                    }
                 default:
                     {
                         break;
                     }
             }
+            Execute(value);
+            SetRegisters();
         }
 
         public override void DecodeArguments(Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref InstructionReference instructionReference)
@@ -108,6 +161,31 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                         break;
                     }
             }
+        }
+
+        protected void Execute(int value)
+        {
+            if (CPU.CarryFlag)
+                value++;
+            CPU.ACC += value;
+        }
+
+        protected void SetRegisters()
+        {
+            CPU.SetCarryFlag(CPU.ACC);
+            CPU.SetOverflowFlag(CPU.ACC);
+            if (CPU.MFlag)
+            {
+                if (CPU.ACC > Mode8Bits.Max)
+                    CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
+            }
+            else
+            {
+                if (CPU.ACC > Mode16Bits.Max)
+                    CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
+            }
+            CPU.SetZeroFlag(CPU.ACC);
+            CPU.SetNegativeFlag(CPU.ACC);
         }
     }
 }
