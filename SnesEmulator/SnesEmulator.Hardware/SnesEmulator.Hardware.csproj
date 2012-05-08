@@ -41,10 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CPU.cs" />
+    <Compile Include="Instructions\InstructionDecodeContext.cs" />
     <Compile Include="Instructions\InstructionsSets\GenericInstruction.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionBRK.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionJMP.cs" />
-    <Compile Include="MFlagMode.cs" />
     <Compile Include="InstructionsDecodeTable.cs" />
     <Compile Include="Instructions\Instruction.cs" />
     <Compile Include="Instructions\InstructionReference.cs" />

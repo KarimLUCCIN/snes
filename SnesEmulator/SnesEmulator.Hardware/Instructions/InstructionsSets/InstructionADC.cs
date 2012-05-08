@@ -106,7 +106,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             SetRegisters();
         }
 
-        public override void DecodeArguments(Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref InstructionReference instructionReference)
+        public override void DecodeArguments(Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref InstructionReference instructionReference)
         {
             switch (AddrMode)
             {
@@ -114,10 +114,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                 case CPU.AddressingModes.ImmediateIndexFlag:
                 case CPU.AddressingModes.Immediate8Bit:
                     {
-                        if (mode == MFlagMode.Mode8Bits)
-                            instructionReference.param1 = DecodeByteArgument(bin, ref offset);
-                        else
-                            instructionReference.param1 = DecodeInt2Argument(bin, ref offset);
+                        instructionReference.param1 = DecodeI1I2ArgumentForMFlag(bin, ref offset, ref context);
                         break;
                     }
                 case CPU.AddressingModes.Absolute:
@@ -139,7 +136,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                 case CPU.AddressingModes.DirectIndirectIndexed:
                 case CPU.AddressingModes.DirectIndirectLong:
                     {
-                        instructionReference.param1 = DecodeByteArgument(bin, ref offset);
+                        instructionReference.param1 = DecodeInt1Argument(bin, ref offset);
                         break;
                     }
 
@@ -157,7 +154,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 
                 default:
                     {
-                        instructionReference.param1 = DecodeByteArgument(bin, ref offset);
+                        instructionReference.param1 = DecodeInt1Argument(bin, ref offset);
                         break;
                     }
             }

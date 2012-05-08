@@ -23,7 +23,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             throw new NotImplementedException();
         }
 
-        public override void DecodeArguments(Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref InstructionReference instructionReference)
+        public override void DecodeArguments(Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref InstructionReference instructionReference)
         {
             switch (AddrMode)
             {

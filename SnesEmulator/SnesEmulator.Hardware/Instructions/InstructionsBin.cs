@@ -8,14 +8,14 @@ namespace SnesEmulator.Hardware.Instructions
 {
     public class InstructionsBin
     {
-        private MFlagMode decodeMode;
+        private InstructionDecodeContext decodeContext;
 
-        public MFlagMode DecodeMode
+        public InstructionDecodeContext DecodeContext
         {
-            get { return decodeMode; }
-            set { decodeMode = value; }
+            get { return decodeContext; }
+            set { decodeContext = value; }
         }
-
+        
         private InstructionReference[] instructions = new InstructionReference[0];
 
         public InstructionReference[] Instructions

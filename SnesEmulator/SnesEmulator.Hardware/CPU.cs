@@ -165,6 +165,7 @@ namespace SnesEmulator.Hardware
         public int SP { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
+        public int M { get; set; }
 
         #endregion
 
@@ -174,8 +175,9 @@ namespace SnesEmulator.Hardware
         public bool ZeroFlag { get; private set; }
         public bool OverflowFlag { get; private set; }
         public bool CarryFlag { get; private set; }
-        public bool MFlag { get; set; }
-        public bool XFlag { get; set; }
+
+        public bool MFlag { get { return M > 0; } }
+        public bool XFlag { get { return X > 0; } }
 
         public void SetNegativeFlag(int value)
         {
@@ -216,7 +218,9 @@ namespace SnesEmulator.Hardware
         {
             this.RAM = RAM;
             ACC = X = Y = 0x00;
-            MFlag = XFlag = true;
+            
+            M = 1;
+
             DecodeTable = new InstructionsDecodeTable(this);
         }
     }

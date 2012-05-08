@@ -46,7 +46,7 @@ namespace SnesEmulator
                 {
                     using(var wr = new System.IO.StreamWriter(decodeOut))
                     {
-                        snes.Decoder.Decode(romBin, 0, MFlagMode.Mode16Bits).Print(wr);
+                        snes.Decoder.Decode(romBin, 0).Print(wr);
 
                         wr.Flush();
                         decodeOut.Flush();

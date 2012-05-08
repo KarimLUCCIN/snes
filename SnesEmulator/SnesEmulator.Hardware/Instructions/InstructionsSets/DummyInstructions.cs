@@ -23,7 +23,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 
         }
 
-        public override void DecodeArguments(Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref InstructionReference instructionReference)
+        public override void DecodeArguments(Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref InstructionReference instructionReference)
         {
             /* No Args */
         }
@@ -47,7 +47,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 
         }
 
-        public override void DecodeArguments(Memory.MemoryBin bin, MFlagMode mode, ref int offset, ref InstructionReference instructionReference)
+        public override void DecodeArguments(Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref InstructionReference instructionReference)
         {
             /* No Args */
         }
