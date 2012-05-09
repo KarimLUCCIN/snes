@@ -7,8 +7,8 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 {
     public class InstructionADC : Instruction
     {
-        public InstructionADC(CPU cpu, CPU.AddressingModes addressingMode)
-            : base(cpu, CPU.Opcodes.ADC, addressingMode)
+        public InstructionADC(CPU cpu, AddressingModes addressingMode)
+            : base(cpu, OpCodes.ADC, addressingMode)
         {
 
         }
@@ -23,77 +23,77 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             int value = 0;
             switch (AddrMode)
             {
-                case CPU.AddressingModes.DirectIndexedIndirect:
+                case AddressingModes.DirectIndexedIndirect:
                     {
                         int address = CPU.RAM.ReadByte(arg1 + CPU.X);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
-                case CPU.AddressingModes.StackRelative:
+                case AddressingModes.StackRelative:
                     {
                         break;
                     }
-                case CPU.AddressingModes.Direct:
+                case AddressingModes.Direct:
                     {
                         int address = CPU.RAM.ReadByte(arg1);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
-                case CPU.AddressingModes.DirectIndirectLong:
+                case AddressingModes.DirectIndirectLong:
                     {
                         break;
                     }
-                case CPU.AddressingModes.ImmediateMemoryFlag:
-                case CPU.AddressingModes.ImmediateIndexFlag:
-                case CPU.AddressingModes.Immediate8Bit:
+                case AddressingModes.ImmediateMemoryFlag:
+                case AddressingModes.ImmediateIndexFlag:
+                case AddressingModes.Immediate8Bit:
                     {
                         value = arg1;
                         break;
                     }
-                case CPU.AddressingModes.Absolute:
+                case AddressingModes.Absolute:
                     {
                         int address = CPU.RAM.ReadByte(arg1);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
-                case CPU.AddressingModes.AbsoluteLong:
+                case AddressingModes.AbsoluteLong:
                     {
                         break;
                     }
-                case CPU.AddressingModes.DirectIndirectIndexed:
+                case AddressingModes.DirectIndirectIndexed:
                     {
                         break;
                     }
-                case CPU.AddressingModes.DirectIndirect:
+                case AddressingModes.DirectIndirect:
                     {
                         break;
                     }
-                case CPU.AddressingModes.StackRelativeIndirectIndexed:
+                case AddressingModes.StackRelativeIndirectIndexed:
                     {
                         break;
                     }
-                case CPU.AddressingModes.DirectIndexedX:
+                case AddressingModes.DirectIndexedX:
                     {
 
                         break;
                     }
-                case CPU.AddressingModes.DirectIndirectIndexedLong:
+                case AddressingModes.DirectIndirectIndexedLong:
                     {
                         break;
                     }
-                case CPU.AddressingModes.AbsoluteIndexedX:
+                case AddressingModes.AbsoluteIndexedX:
                     {
                         int address = CPU.RAM.ReadByte(arg1 + CPU.X);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
-                case CPU.AddressingModes.AbsoluteIndexedY:
+                case AddressingModes.AbsoluteIndexedY:
                     {
                         int address = CPU.RAM.ReadByte(arg1 + CPU.Y);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
-                case CPU.AddressingModes.AbsoluteIndexedLong:
+                case AddressingModes.AbsoluteIndexedLong:
                     {
                         break;
                     }
@@ -110,43 +110,43 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
         {
             switch (AddrMode)
             {
-                case CPU.AddressingModes.ImmediateMemoryFlag:
-                case CPU.AddressingModes.ImmediateIndexFlag:
-                case CPU.AddressingModes.Immediate8Bit:
+                case AddressingModes.ImmediateMemoryFlag:
+                case AddressingModes.ImmediateIndexFlag:
+                case AddressingModes.Immediate8Bit:
                     {
                         instructionReference.param1 = DecodeI1I2ArgumentForMFlag(bin, ref offset, ref context);
                         break;
                     }
-                case CPU.AddressingModes.Absolute:
+                case AddressingModes.Absolute:
                     {
                         instructionReference.param1 = DecodeInt2Argument(bin, ref offset);
                         break;
                     }
-                case CPU.AddressingModes.AbsoluteLong:
+                case AddressingModes.AbsoluteLong:
                     {
                         instructionReference.param1 = DecodeInt3Argument(bin, ref offset);
                         break;
                     }
 
 
-                case CPU.AddressingModes.DirectIndexedIndirect:
-                case CPU.AddressingModes.StackRelative:
-                case CPU.AddressingModes.Direct:
-                case CPU.AddressingModes.DirectIndirect:
-                case CPU.AddressingModes.DirectIndirectIndexed:
-                case CPU.AddressingModes.DirectIndirectLong:
+                case AddressingModes.DirectIndexedIndirect:
+                case AddressingModes.StackRelative:
+                case AddressingModes.Direct:
+                case AddressingModes.DirectIndirect:
+                case AddressingModes.DirectIndirectIndexed:
+                case AddressingModes.DirectIndirectLong:
                     {
                         instructionReference.param1 = DecodeInt1Argument(bin, ref offset);
                         break;
                     }
 
-                case CPU.AddressingModes.AbsoluteIndexedX:
-                case CPU.AddressingModes.AbsoluteIndexedY:
+                case AddressingModes.AbsoluteIndexedX:
+                case AddressingModes.AbsoluteIndexedY:
                     {
                         instructionReference.param1 = DecodeInt2Argument(bin, ref offset);
                         break;
                     }
-                case CPU.AddressingModes.AbsoluteIndexedLong:
+                case AddressingModes.AbsoluteIndexedLong:
                     {
                         instructionReference.param1 = DecodeInt3Argument(bin, ref offset);
                         break;

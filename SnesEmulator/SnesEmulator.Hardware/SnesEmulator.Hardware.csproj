@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressingModes.cs" />
     <Compile Include="CPU.cs" />
     <Compile Include="Instructions\InstructionDecodeContext.cs" />
     <Compile Include="Instructions\InstructionsSets\GenericInstruction.cs" />
@@ -55,8 +56,10 @@
     <Compile Include="Instructions\InstructionsSets\InstructionInvalid.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionXBA.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionXCE.cs" />
+    <Compile Include="Instructions\LiveInstructionsDecoder.cs" />
     <Compile Include="Memory\MemoryBin.cs" />
     <Compile Include="Memory\MemoryContainer.cs" />
+    <Compile Include="OpCodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SnesPlatform.cs" />
     <Compile Include="Values.cs" />

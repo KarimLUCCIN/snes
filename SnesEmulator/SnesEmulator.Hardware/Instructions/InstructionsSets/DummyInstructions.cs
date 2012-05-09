@@ -8,7 +8,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
     public class InstructionWDM : Instruction
     {
         public InstructionWDM(CPU cpu)
-            : base(cpu, CPU.Opcodes.WDM, CPU.AddressingModes.Implied)
+            : base(cpu, OpCodes.WDM, AddressingModes.Implied)
         {
 
         }
@@ -32,7 +32,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
     public class InstructionNOP : Instruction
     {
         public InstructionNOP(CPU cpu)
-            : base(cpu, CPU.Opcodes.NOP, CPU.AddressingModes.Implied)
+            : base(cpu, OpCodes.NOP, AddressingModes.Implied)
         {
 
         }

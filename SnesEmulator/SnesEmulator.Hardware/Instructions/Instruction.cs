@@ -14,16 +14,16 @@ namespace SnesEmulator.Hardware.Instructions
     {
         public abstract bool HaveArgs { get; }
 
-        private CPU.Opcodes code;
+        private OpCodes code;
 
-        public CPU.Opcodes Code
+        public OpCodes Code
         {
             get { return code; }
         }
 
-        private CPU.AddressingModes addrMode;
+        private AddressingModes addrMode;
 
-        public CPU.AddressingModes AddrMode
+        public AddressingModes AddrMode
         {
             get { return addrMode; }
         }
@@ -35,7 +35,7 @@ namespace SnesEmulator.Hardware.Instructions
             get { return cpu; }
         }
 
-        public Instruction(CPU cpu, CPU.Opcodes code, CPU.AddressingModes addrMode)
+        public Instruction(CPU cpu, OpCodes code, AddressingModes addrMode)
         {
             this.cpu = cpu;
             this.code = code;
@@ -46,52 +46,52 @@ namespace SnesEmulator.Hardware.Instructions
         {
             switch (addrMode)
             {
-                case CPU.AddressingModes.Implied:
+                case AddressingModes.Implied:
                     return param1;
-                case CPU.AddressingModes.ImmediateMemoryFlag:
-                case CPU.AddressingModes.ImmediateIndexFlag:
-                case CPU.AddressingModes.Immediate8Bit:
+                case AddressingModes.ImmediateMemoryFlag:
+                case AddressingModes.ImmediateIndexFlag:
+                case AddressingModes.Immediate8Bit:
                     return "#" + param1;
-                case CPU.AddressingModes.Relative:
-                case CPU.AddressingModes.RelativeLong:
-                case CPU.AddressingModes.Direct:
-                case CPU.AddressingModes.DirectIndirect:
+                case AddressingModes.Relative:
+                case AddressingModes.RelativeLong:
+                case AddressingModes.Direct:
+                case AddressingModes.DirectIndirect:
                     return "(" + param1 + ")";
-                case CPU.AddressingModes.DirectIndexedX:
+                case AddressingModes.DirectIndexedX:
                     return param1 + ", x";
-                case CPU.AddressingModes.DirectIndexedY:
+                case AddressingModes.DirectIndexedY:
                     return param1 + ", y";
-                case CPU.AddressingModes.DirectIndexedIndirect:
+                case AddressingModes.DirectIndexedIndirect:
                     return "(" + param1 + ", x)";
-                case CPU.AddressingModes.DirectIndirectIndexed:
+                case AddressingModes.DirectIndirectIndexed:
                     return "(" + param1 + "), y";
-                case CPU.AddressingModes.DirectIndirectLong:
+                case AddressingModes.DirectIndirectLong:
                     return "[" + param1 + "]";
-                case CPU.AddressingModes.DirectIndirectIndexedLong:
+                case AddressingModes.DirectIndirectIndexedLong:
                     return "[" + param1 + "], y";
-                case CPU.AddressingModes.Absolute:
+                case AddressingModes.Absolute:
                     return param1;
-                case CPU.AddressingModes.AbsoluteIndexedX:
+                case AddressingModes.AbsoluteIndexedX:
                     return param1 + ", x";
-                case CPU.AddressingModes.AbsoluteIndexedY:
+                case AddressingModes.AbsoluteIndexedY:
                     return param1 + ", y";
-                case CPU.AddressingModes.AbsoluteLong:
+                case AddressingModes.AbsoluteLong:
                     return param1;
-                case CPU.AddressingModes.AbsoluteIndexedLong:
+                case AddressingModes.AbsoluteIndexedLong:
                     return param1 + ", x";
-                case CPU.AddressingModes.StackRelative:
+                case AddressingModes.StackRelative:
                     return param1 + ", s";
-                case CPU.AddressingModes.StackRelativeIndirectIndexed:
+                case AddressingModes.StackRelativeIndirectIndexed:
                     return "(" + param1 + ", s), y";
-                case CPU.AddressingModes.AbsoluteIndirect:
+                case AddressingModes.AbsoluteIndirect:
                     return "(" + param1 + ")";
-                case CPU.AddressingModes.AbsoluteIndirectLong:
+                case AddressingModes.AbsoluteIndirectLong:
                     return "[" + param1 + "]";
-                case CPU.AddressingModes.AbsoluteIndexedIndirect:
+                case AddressingModes.AbsoluteIndexedIndirect:
                     return "(" + param1 + ", x)";
-                case CPU.AddressingModes.ImpliedAccumulator:
+                case AddressingModes.ImpliedAccumulator:
                     return param1;
-                case CPU.AddressingModes.BlockMove:
+                case AddressingModes.BlockMove:
                     return param1 + ", " + param2;
                 default:
                     return param1;

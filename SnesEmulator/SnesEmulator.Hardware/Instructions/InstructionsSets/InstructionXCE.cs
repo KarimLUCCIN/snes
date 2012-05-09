@@ -8,7 +8,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
     public class InstructionXCE : Instruction
     {
         public InstructionXCE(CPU cpu)
-            :base(cpu, CPU.Opcodes.XCE, CPU.AddressingModes.Implied)
+            :base(cpu, OpCodes.XCE, AddressingModes.Implied)
         {
 
         }

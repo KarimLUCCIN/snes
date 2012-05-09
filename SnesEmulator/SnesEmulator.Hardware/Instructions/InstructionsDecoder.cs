@@ -19,17 +19,26 @@ namespace SnesEmulator.Hardware.Instructions
             get { return cpu; }
         }
 
+        Instruction[] knownInstructions = null;
+
+        public Instruction[] KnownInstructions
+        {
+            get { return knownInstructions; }
+        }
+
         public InstructionsDecoder(CPU cpu)
         {
             if (cpu == null)
                 throw new ArgumentNullException("cpu");
 
             this.cpu = cpu;
+
+            knownInstructions = cpu.DecodeTable.KnownInstructions;
         }
 
         public InstructionsBin Decode(MemoryBin bin, int offset)
         {
-            return Decode(bin, offset, new InstructionDecodeContext() { MFlag = cpu.MFlag, XFlag = cpu.XFlag });
+            return Decode(bin, offset, CPU.BuildCurrentContext());
         }
 
         /// <summary>
@@ -46,8 +55,6 @@ namespace SnesEmulator.Hardware.Instructions
             var decodeResult = new List<InstructionReference>();
             var length = bin.Length;
 
-            var insTable = CPU.DecodeTable.KnownInstructions;
-
             int originalOffset = 0;
 
             while (offset < length)
@@ -55,7 +62,7 @@ namespace SnesEmulator.Hardware.Instructions
                 var code = bin.ReadByte(originalOffset = offset);
                 offset++;
 
-                var match = insTable[code];
+                var match = knownInstructions[code];
 
                 var instructionReference = new InstructionReference();
                 instructionReference.instruction = match;
@@ -69,6 +76,25 @@ namespace SnesEmulator.Hardware.Instructions
             var result = new InstructionsBin() { DecodeContext = context, Instructions = decodeResult.ToArray() };
 
             return result;
+        }
+
+        /// <summary>
+        /// Decode une unique instruction à partir de l'offset spécifié dans le bin spécifié à l'aide du contexte courrant, et la stoque dans decodedInstruction
+        /// </summary>
+        /// <param name="bin"></param>
+        /// <param name="offset"></param>
+        /// <param name="context"></param>
+        /// <param name="decodedInstruction"></param>
+        public void DecodeOnce(MemoryBin bin, ref int offset, ref InstructionDecodeContext context, ref InstructionReference decodedInstruction)
+        {
+            var code = bin.ReadByte(offset);
+            offset++;
+
+            var match = knownInstructions[code];
+            decodedInstruction.instruction = match;
+            decodedInstruction.offset = offset - 1;
+
+            match.DecodeArguments(bin, ref context, ref offset, ref decodedInstruction);
         }
     }
 }

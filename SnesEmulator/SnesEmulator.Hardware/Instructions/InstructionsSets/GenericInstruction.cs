@@ -7,7 +7,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 {
     public class GenericInstruction : Instruction
     {
-        public GenericInstruction(CPU cpu, CPU.Opcodes opCode, CPU.AddressingModes addrMode, bool haveArguments)
+        public GenericInstruction(CPU cpu, OpCodes opCode, AddressingModes addrMode, bool haveArguments)
             :base(cpu, opCode, addrMode)
         {
             this.haveArguments = haveArguments;

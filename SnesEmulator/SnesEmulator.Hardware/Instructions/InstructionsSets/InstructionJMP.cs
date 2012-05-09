@@ -7,8 +7,8 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 {
     public class InstructionJMP : Instruction
     {
-        public InstructionJMP(CPU cpu, CPU.AddressingModes addressingMode)
-            : base(cpu, CPU.Opcodes.ADC, addressingMode)
+        public InstructionJMP(CPU cpu, AddressingModes addressingMode)
+            : base(cpu, OpCodes.ADC, addressingMode)
         {
 
         }
@@ -27,7 +27,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
         {
             switch (AddrMode)
             {
-                case CPU.AddressingModes.AbsoluteLong:
+                case AddressingModes.AbsoluteLong:
                     {
                         instructionReference.param1 = DecodeInt3Argument(bin, ref offset);
                         break;

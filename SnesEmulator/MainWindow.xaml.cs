@@ -53,6 +53,8 @@ namespace SnesEmulator
                     }
                 }
 
+                snes.Interpreter.Interpret(romBin, 0);
+
                 //while (strm.Position < strm.Length - 1000)
                 //    MiniDecode(strm);
 

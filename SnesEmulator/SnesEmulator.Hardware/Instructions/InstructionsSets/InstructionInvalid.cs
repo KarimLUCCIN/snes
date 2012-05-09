@@ -20,7 +20,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
         /// <param name="cpu"></param>
         /// <param name="hexa">Le code brut de l'instruction non reconnue</param>
         public InstructionInvalid(CPU cpu, int hexa)
-            :base(cpu, CPU.Opcodes.INVALID, CPU.AddressingModes.Absolute)
+            :base(cpu, OpCodes.INVALID, AddressingModes.Absolute)
         {
             this.hexa = hexa;
         }

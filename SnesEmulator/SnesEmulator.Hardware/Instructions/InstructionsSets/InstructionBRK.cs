@@ -8,7 +8,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
     public class InstructionBRK: Instruction
     {
         public InstructionBRK(CPU cpu)
-            :base(cpu, CPU.Opcodes.BRK, CPU.AddressingModes.StackRelative)
+            :base(cpu, OpCodes.BRK, AddressingModes.StackRelative)
         {
 
         }
