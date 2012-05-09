@@ -162,10 +162,15 @@ namespace SnesEmulator.Hardware
         #region Registers
 
         public int ACC { get; set; }
-        public int SP { get; set; }
+        public int B { get; set; } // Accumulateur B "caché" seulement en mode Emulation
+        public int SP { get; set; } // Stack pointer
         public int X { get; set; }
         public int Y { get; set; }
         public int M { get; set; }
+        public int D { get; set; } // Direct Page register
+        public int DBR { get; set; }
+        public int PBR { get; set; }
+
 
         #endregion
 
@@ -175,9 +180,12 @@ namespace SnesEmulator.Hardware
         public bool ZeroFlag { get; private set; }
         public bool OverflowFlag { get; private set; }
         public bool CarryFlag { get; private set; }
+        public bool EFlag { get; set; }
 
-        public bool MFlag { get { return M > 0; } }
-        public bool XFlag { get { return X > 0; } }
+        public bool BreakFlag { get; set; } // Emulation mode
+
+        public bool MFlag { get { return M > 0; } private set { ; } } // Native mode
+        public bool XFlag { get { return X > 0; } private set { ; } } // Native mode
 
         public void SetNegativeFlag(int value)
         {
@@ -217,11 +225,34 @@ namespace SnesEmulator.Hardware
         public CPU(MemoryBin RAM)
         {
             this.RAM = RAM;
-            ACC = X = Y = 0x00;
-            
+            ACC = X = Y = PBR = DBR = 0x00;
+            EFlag = true; // Le processeur démarre en mode Emulation
+            D = 0x00; // La Direct Page correspond à la Zero Page en mode émulation. Elle pointe donc à l'adresse 0
+            SP = 0x100; // Le stack pointer est à 0x100 en mode émulation
             M = 1;
 
             DecodeTable = new InstructionsDecodeTable(this);
+        }
+
+        public void SwitchFromEmulationToNativeMode()
+        {
+            CarryFlag = EFlag;
+            EFlag = false;
+            XFlag = MFlag = true; // Les flags X et M sont forcés à 1 pour rester sur 8 bits
+            // ... Modifier le SP ?
+            // XFlag et MFlag deviennent disponibles et BreakFlag indisponible
+        }
+
+        public void SwitchFromNativeToEmulationMode()
+        {
+            CarryFlag = EFlag;
+            EFlag = true;
+            X = X & 0xFF; // X passe à 8 bits donc perd l'octet fort
+            Y = Y & 0xFF; // Pareil pour Y
+            B = (ACC >> 8) & 0xFF; // ACC garde son octet fort dans le registre "caché" B ...
+            ACC = ACC & 0xFF;
+            // ... Modifier le SP ?
+            // XFlag et MFlag ne doivent plus être utilisés en mode Emulation, et BreakFlag devient dispo
         }
     }
 }
