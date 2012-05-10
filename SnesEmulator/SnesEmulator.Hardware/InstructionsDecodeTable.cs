@@ -398,7 +398,7 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x7A, GenericInst(Hardware.OpCodes.PLY, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { }));
 
             // REP
-            RegisterKnownInstruction(0xC2, GenericInst(Hardware.OpCodes.REP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { }));
+            RegisterKnownInstruction(0xC2, GenericInst(Hardware.OpCodes.REP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { }, ArgumentType.I1));
 
             // ROL
             RegisterKnownInstruction(0x26, GenericInst(Hardware.OpCodes.ROL, Hardware.AddressingModes.Direct, (sender, p1, p2) => { }, ArgumentType.I1));
