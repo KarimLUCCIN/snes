@@ -17,7 +17,7 @@ namespace SnesEmulator.Hardware
         public int SP { get; set; } // Stack pointer
         public int X { get; set; }
         public int Y { get; set; }
-        public int M { get; set; }
+        //public int M { get; set; } Etre ou ne pas être ? Telle est la question
         public int D { get; set; } // Direct Page register
         public int DBR { get; set; }
         public int PBR { get; set; }
@@ -40,8 +40,8 @@ namespace SnesEmulator.Hardware
 
         public bool BreakFlag { get; set; } // Emulation mode
 
-        public bool MFlag { get { return M > 0; } private set { ; } } // Native mode
-        public bool XFlag { get { return X > 0; } private set { ; } } // Native mode
+        public bool MFlag { get; private set; } // Native mode
+        public bool XFlag { get; private set; } // Native mode
 
         public void SetNegativeFlag(int value)
         {
@@ -78,6 +78,8 @@ namespace SnesEmulator.Hardware
 
         public MemoryBin RAM { get; private set; }
 
+        public MemoryBin DirectPage { get; set; }
+
         public CPU(MemoryBin RAM)
         {
             this.RAM = RAM;
@@ -85,8 +87,9 @@ namespace SnesEmulator.Hardware
             EFlag = true; // Le processeur démarre en mode Emulation
             D = 0x00; // La Direct Page correspond à la Zero Page en mode émulation. Elle pointe donc à l'adresse 0
             SP = 0x100; // Le stack pointer est à 0x100 en mode émulation
-            M = 1;
+            //M = 1;
             PC = 0;
+            DirectPage = new MemoryBin(RAM.Container, RAM.Start, 256); 
 
             DecodeTable = new InstructionsDecodeTable(this);
         }
@@ -108,8 +111,10 @@ namespace SnesEmulator.Hardware
             Y = Y & 0xFF; // Pareil pour Y
             B = (ACC >> 8) & 0xFF; // ACC garde son octet fort dans le registre "caché" B ...
             ACC = ACC & 0xFF;
-            // ... Modifier le SP ?
+            SP = 0x100; // Stack remise à la page 1 du Data Bank 0
+            // La Direct Page passe à 0x00 normalement, mais si on revient en Native mode, elle récupère sa valeur d'avant ou garde 0 ? => A vérifier.
             // XFlag et MFlag ne doivent plus être utilisés en mode Emulation, et BreakFlag devient dispo
+            XFlag = MFlag = true;
         }
 
         /// <summary>

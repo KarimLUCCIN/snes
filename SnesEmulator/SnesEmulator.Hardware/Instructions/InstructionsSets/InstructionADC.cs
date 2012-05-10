@@ -25,8 +25,6 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             {
                 case AddressingModes.DirectIndexedIndirect:
                     {
-                        int address = CPU.RAM.ReadByte(arg1 + CPU.X);
-                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.StackRelative:
@@ -35,7 +33,11 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                     }
                 case AddressingModes.Direct:
                     {
-                        int address = CPU.RAM.ReadByte(arg1);
+                        int address;
+                        if (CPU.EFlag)
+                            address = CPU.DirectPage.ReadByte(arg1);
+                        else
+                            address = CPU.DirectPage.ReadByte(arg1 + CPU.D);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
@@ -52,7 +54,11 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                     }
                 case AddressingModes.Absolute:
                     {
-                        int address = CPU.RAM.ReadByte(arg1);
+                        int address;
+                        if(CPU.EFlag)
+                            address = CPU.RAM.ReadByte(arg1);
+                        else
+                            address = CPU.RAM.ReadByte(arg1) | (CPU.DBR << 16);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
@@ -66,6 +72,20 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                     }
                 case AddressingModes.DirectIndirect:
                     {
+                        int address;
+                        if (CPU.EFlag)
+                        {
+                            int addressPointerLow = CPU.DirectPage.ReadByte(arg1);
+                            int addressPointerHigh = CPU.DirectPage.ReadByte(arg1 + 1);
+                            address = addressPointerLow | addressPointerHigh << 8;
+                        }
+                        else
+                        {
+                            int addressPointerLow = CPU.DirectPage.ReadByte(arg1 + CPU.D);
+                            int addressPointerHigh = CPU.DirectPage.ReadByte(arg1 + CPU.D + 1);
+                            address = (addressPointerLow | addressPointerHigh << 8) | (CPU.DBR << 16);
+                        }
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.StackRelativeIndirectIndexed:
@@ -83,13 +103,15 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                     }
                 case AddressingModes.AbsoluteIndexedX:
                     {
-                        int address = CPU.RAM.ReadByte(arg1 + CPU.X);
+                        int X = CPU.XFlag ? CPU.X & 0xFF : CPU.X; // Si x = 1 (donc X sur 8bits) on garde que le low byte
+                        int address = (CPU.RAM.ReadByte(arg1) | (CPU.DBR << 16)) + CPU.X;
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.AbsoluteIndexedY:
                     {
-                        int address = CPU.RAM.ReadByte(arg1 + CPU.Y);
+                        int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
+                        int address = (CPU.RAM.ReadByte(arg1) | (CPU.DBR << 16)) + CPU.Y;
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
