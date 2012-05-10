@@ -42,8 +42,14 @@ namespace SnesEmulator.Hardware.Instructions
             this.addrMode = addrMode;
         }
 
-        protected virtual string PrintParameter(string param1, string param2 = null)
+        protected string PrintParameter(string param1, string param2 = null)
         {
+            if (!String.IsNullOrEmpty(param1))
+                param1 = "$" + param1;
+
+            if (!String.IsNullOrEmpty(param2))
+                param2 = "$" + param2;
+
             switch (addrMode)
             {
                 case AddressingModes.Implied:
@@ -100,7 +106,7 @@ namespace SnesEmulator.Hardware.Instructions
 
         public virtual string StringRepresentation(int param1 = 0, int param2 = 0)
         {
-            return String.Format("{0} {1}", code.ToString(), HaveArgs ? PrintParameter(param1.ToString(), param2.ToString()) : String.Empty);
+            return String.Format("{0} {1}", code.ToString(), HaveArgs ? PrintParameter(param1.ToString("X"), param2.ToString("X")) : String.Empty);
         }
 
         public abstract void Run(int arg1, int arg2);

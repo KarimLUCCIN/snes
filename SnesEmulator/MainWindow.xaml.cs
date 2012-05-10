@@ -27,24 +27,17 @@ namespace SnesEmulator
         {
             InitializeComponent();
 
-            using (var strm = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Super Mario All-Stars.smc",
+            using (var strm = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SnesInitializationROM.smc",
                 System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
-                int romSize, ramSize;
+                var snes = new SnesPlatform((int)strm.Length, 64);
 
-                bool hasHeader = true;
-                var headerPosition = hasHeader ? RomHeaderConstants.HeaderedLoROM : RomHeaderConstants.HeaderLessLoROM;
+                var romBin = Loader.LoadInto(strm, 0, 0, snes.Memory, 0);
 
-                Loader.GetROMParameters(strm, 0, headerPosition, out romSize, out ramSize);
-
-                var snes = new SnesPlatform(romSize, ramSize);
-
-                var romBin = Loader.LoadInto(strm, 0, headerPosition, snes.Memory, 0);
-
-                using (var decodeOut = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\decode.txt",
+                using (var decodeOut = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\init-decode.txt",
                     System.IO.FileMode.Create))
                 {
-                    using(var wr = new System.IO.StreamWriter(decodeOut))
+                    using (var wr = new System.IO.StreamWriter(decodeOut))
                     {
                         snes.Decoder.Decode(romBin, 0).Print(wr);
 
@@ -52,14 +45,41 @@ namespace SnesEmulator
                         decodeOut.Flush();
                     }
                 }
-
-                snes.Interpreter.Interpret(romBin, 0);
-
-                //while (strm.Position < strm.Length - 1000)
-                //    MiniDecode(strm);
-
-                MessageBox.Show("");
             }
+
+            //using (var strm = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Super Mario All-Stars.smc",
+            //    System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            //{
+            //    int romSize, ramSize;
+
+            //    bool hasHeader = true;
+            //    var headerPosition = hasHeader ? RomHeaderConstants.HeaderedLoROM : RomHeaderConstants.HeaderLessLoROM;
+
+            //    Loader.GetROMParameters(strm, 0, headerPosition, out romSize, out ramSize);
+
+            //    var snes = new SnesPlatform(romSize, ramSize);
+
+            //    var romBin = Loader.LoadInto(strm, 0, headerPosition, snes.Memory, 0);
+
+            //    using (var decodeOut = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\decode.txt",
+            //        System.IO.FileMode.Create))
+            //    {
+            //        using(var wr = new System.IO.StreamWriter(decodeOut))
+            //        {
+            //            snes.Decoder.Decode(romBin, 0).Print(wr);
+
+            //            wr.Flush();
+            //            decodeOut.Flush();
+            //        }
+            //    }
+
+            //    snes.Interpreter.Interpret(romBin, 0);
+
+            //    //while (strm.Position < strm.Length - 1000)
+            //    //    MiniDecode(strm);
+
+            //    MessageBox.Show("");
+            //}
         }
 
         //Marche pas, car on doit connaître la valeur des registres pour certaines instructions
