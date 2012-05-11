@@ -71,9 +71,13 @@ namespace SnesEmulator.Renderer
                 SwapEffect = SwapEffect.Discard,
                 Usage = Usage.RenderTargetOutput
             };
-
+            
             // Create Device and SwapChain
-            Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.BgraSupport, desc, out device, out swapChain);
+            //Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.BgraSupport, desc, out device, out swapChain);
+            Factory factory = new Factory();
+            var adapter = factory.GetAdapter(0);
+            device = new Device(adapter, DeviceCreationFlags.BgraSupport, SharpDX.Direct3D10.FeatureLevel.Level_10_0);
+            swapChain = new SwapChain(factory, device, desc);
 
             //device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, SharpDX.Direct3D10.FeatureLevel.Level_10_0);
 
