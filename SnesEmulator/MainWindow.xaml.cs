@@ -15,22 +15,33 @@ using SnesEmulator.RomReader;
 using System.Diagnostics;
 using System.Reflection;
 using SnesEmulator.Hardware;
+using SnesEmulator.Renderer;
+using System.ComponentModel;
 
 namespace SnesEmulator
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public RenderEngine Renderer { get; private set; }
+
         public MainWindow()
         {
             InitializeComponent();
 
+            InitializeGraphics();
+
+            DataContext = this;
+
+#warning TODO A changer lorsqu'il y aura un vrai rendu avec une horloge
+            CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+
             using (var strm = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SnesInitializationROM.smc",
                 System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
-                var snes = new SnesPlatform((int)strm.Length, 64);
+                var snes = new SnesPlatform((int)strm.Length, 256);
 
                 var romBin = Loader.LoadInto(strm, 0, 0, snes.Memory, 0);
 
@@ -82,49 +93,30 @@ namespace SnesEmulator
             //}
         }
 
-        //Marche pas, car on doit connaître la valeur des registres pour certaines instructions
-        //private void MiniDecode(System.IO.FileStream strm)
-        //{
-        //    int b = strm.ReadByte();
+        void CompositionTarget_Rendering(object sender, EventArgs e)
+        {
+            Renderer.RenderPass();
+        }
 
-        //    switch (b)
-        //    {
-        //        case 0: { Debug.WriteLine("BRK"); strm.Position += 1; break; }
-        //        case 0x12: { Debug.WriteLine("ORA(dp)"); strm.Position += 1; break; }
-        //        case 0x05: { Debug.WriteLine("ORA dp"); strm.Position += 1; break; }
-        //        case 0x01: { Debug.WriteLine("ORA (dp,X)"); strm.Position += 1; break; }
-        //        case 0x1f: { Debug.WriteLine("ORA long,X"); strm.Position += 2; break; }
-        //        case 0xc5: { Debug.WriteLine("CMP dp"); strm.Position += 1; break; }
-        //        case 0x32: { Debug.WriteLine("AND (dp)"); strm.Position += 1; break; }
-        //        case 0x85: { Debug.WriteLine("STA dp"); strm.Position += 1; break; }
-        //        case 0x81: { Debug.WriteLine("STA (dp,X)"); strm.Position += 1; break; }
-        //        case 0x87: { Debug.WriteLine("STA [dp]"); strm.Position += 1; break; }
-        //        case 0x80: { Debug.WriteLine("BRA nearlabel"); strm.Position += 1; break; }
-        //        case 0xc4: { Debug.WriteLine("CPY dp"); strm.Position += 1; break; }
-        //        case 0x84: { Debug.WriteLine("STY dp"); strm.Position += 1; break; }
-        //        case 0x86: { Debug.WriteLine("STX dp"); strm.Position += 1; break; }
-        //        case 0x83: { Debug.WriteLine("STA sr,S"); strm.Position += 1; break; }
-        //        case 0xbb: { Debug.WriteLine("TYX"); strm.Position += 0; break; }
-        //        case 0x22: { Debug.WriteLine("JSR long"); strm.Position += 3; break; }
-        //        case 0xfc: { Debug.WriteLine("JSR (addr,X)"); strm.Position += 2; break; }
-        //        case 0x7c: { Debug.WriteLine("JMP (addr,X)"); strm.Position += 2; break; }
-        //        case 0x45: { Debug.WriteLine("EOR dp"); strm.Position += 3; break; }
-        //        case 0x47: { Debug.WriteLine("EOR [dp]"); strm.Position += 1; break; }
-        //        case 0x38: { Debug.WriteLine("SEC"); strm.Position += 0; break; }
-        //        case 0x3b: { Debug.WriteLine("TSC"); strm.Position += 0; break; }
-        //        case 0x0c: { Debug.WriteLine("TSB addr"); strm.Position += 2; break; }
-        //        case 0x7b: { Debug.WriteLine("TDC"); strm.Position += 0; break; }
-        //        case 0x78: { Debug.WriteLine("SEI"); strm.Position += 0; break; }
-        //        case 0x79: { Debug.WriteLine("ADC addr,Y"); strm.Position += 2; break; }
-        //        case 0x7f: { Debug.WriteLine("ADC long,X"); strm.Position += 2; break; }
-        //        case 0xff: { Debug.WriteLine("SBC long,X"); strm.Position += 2; break; }
-        //        case 0x40: { Debug.WriteLine("RTI"); strm.Position += 0; break; }
-        //        default:
-        //            {
-        //                Debug.WriteLine(String.Format("Unknown : {0}", b.ToString("x")));
-        //                break;
-        //            }
-        //    }
-        //}
+        private void InitializeGraphics()
+        {
+            var renderer = new RenderEngine();
+            renderer.Initialize(600, 400);
+
+            Renderer = renderer;
+            RaisePropertyChanged("Renderer");
+        }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+
+        #endregion
     }
 }
