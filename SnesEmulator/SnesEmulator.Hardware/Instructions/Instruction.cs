@@ -164,5 +164,160 @@ namespace SnesEmulator.Hardware.Instructions
         /// <param name="context"></param>
         /// <param name="instructionReference"></param>
         public abstract void DecodeArguments(MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref InstructionReference instructionReference);
+
+        #region Addressing Modes
+
+        public int DirectIndexedIndirect(int arg1)
+        {
+            int address;
+            int X = CPU.XFlag ? CPU.X & 0xFF : CPU.X; // Si x = 1 (donc X sur 8bits) on garde que le low byte
+            if (CPU.EFlag)
+            {
+                int addressPointerLow = CPU.RAM.ReadByte(arg1 + X);
+                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + X + 1);
+                address = addressPointerLow | addressPointerHigh << 8;
+            }
+            else
+            {
+                int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D + X);
+                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + X + 1);
+                address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
+            }
+            return address;
+        }
+
+        public int StackRelative(int arg1)
+        {
+            // Cet adressage n'existe pas en mode émulation
+            return arg1 + CPU.SP;
+        }
+
+        public int Direct(int arg1)
+        {
+            if (CPU.EFlag)
+                return arg1;
+            else
+                return arg1 + CPU.D;
+        }
+
+        public int DirectIndirectLong(int arg1)
+        {
+            // Cet adressage n'existe pas en mode émulation
+            int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
+            int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
+            int addressPointerDatabank = CPU.RAM.ReadByte(arg1 + CPU.D + 2);
+            return addressPointerLow | addressPointerHigh << 8 | addressPointerDatabank << 16;
+        }
+
+        public int Absolute(int arg1)
+        {
+            if (CPU.EFlag)
+                return arg1;
+            else
+                return arg1 | CPU.DBR << 16;
+        }
+
+        public int AbsoluteLong(int arg1)
+        {
+            // Cet adressage n'existe pas en mode émulation
+            return arg1;
+        }
+
+        public int DirectIndirectIndexed(int arg1)
+        {
+            int address;
+            int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
+            if (CPU.EFlag)
+            {
+                int addressPointerLow = CPU.RAM.ReadByte(arg1);
+                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + 1);
+                address = addressPointerLow | addressPointerHigh << 8;
+                address += Y;
+            }
+            else
+            {
+                int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
+                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
+                address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
+                address += Y;
+            }
+            return address;
+        }
+
+        public int DirectIndirect(int arg1)
+        {
+            int address;
+            if (CPU.EFlag)
+            {
+                int addressPointerLow = CPU.RAM.ReadByte(arg1);
+                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + 1);
+                address = addressPointerLow | addressPointerHigh << 8;
+            }
+            else
+            {
+                int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
+                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
+                address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
+            }
+            return address;
+        }
+
+        public int StackRelativeIndirectIndexed(int arg1)
+        {
+            // Cet adressage n'existe pas en mode émulation
+            int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
+            int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.SP);
+            int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.SP + 1);
+            int address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
+            address += Y;
+            return address;
+        }
+
+        public int DirectIndexedX(int arg1)
+        {
+            int X = CPU.XFlag ? CPU.X & 0xFF : CPU.X; // Si x = 1 (donc X sur 8bits) on garde que le low byte
+            if (CPU.EFlag)
+                return arg1 + X;
+            else
+                return arg1 + CPU.D + X;
+        }
+
+        public int DirectIndirectIndexedLong(int arg1)
+        {
+            // Cet adressage n'existe pas en mode émulation
+            int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
+            int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
+            int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
+            int addressPointerDatabank = CPU.RAM.ReadByte(arg1 + CPU.D + 2);
+            int address = addressPointerLow | addressPointerHigh << 8 | addressPointerDatabank << 16;
+            address += Y;
+            return address;
+        }
+
+        public int AbsoluteIndexedX(int arg1)
+        {
+            int X = CPU.XFlag ? CPU.X & 0xFF : CPU.X; // Si x = 1 (donc X sur 8bits) on garde que le low byte
+            if (CPU.EFlag)
+                return arg1 + CPU.X;
+            else
+                return (arg1 | CPU.DBR << 16) + CPU.X;
+        }
+
+        public int AbsoluteIndexedY(int arg1)
+        {
+            int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
+            if (CPU.EFlag)
+                return arg1 + CPU.Y;
+            else
+                return (arg1 | CPU.DBR << 16) + CPU.Y;
+        }
+
+        public int AbsoluteIndexedLong(int arg1)
+        {
+            int X = CPU.XFlag ? CPU.X & 0xFF : CPU.X; // Si x = 1 (donc X sur 8bits) on garde que le low byte
+            return arg1 + X;
+        }
+
+        #endregion
     }
 }

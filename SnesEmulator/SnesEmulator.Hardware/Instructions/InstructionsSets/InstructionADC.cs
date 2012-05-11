@@ -25,24 +25,27 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             {
                 case AddressingModes.DirectIndexedIndirect:
                     {
+                        int address = DirectIndexedIndirect(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.StackRelative:
                     {
+                        // Cet adressage n'existe pas en mode émulation
+                        int address = StackRelative(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.Direct:
                     {
-                        int address;
-                        if (CPU.EFlag)
-                            address = CPU.DirectPage.ReadByte(arg1);
-                        else
-                            address = CPU.DirectPage.ReadByte(arg1 + CPU.D);
+                        int address = Direct(arg1);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.DirectIndirectLong:
                     {
+                        int address = DirectIndirectLong(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.ImmediateMemoryFlag:
@@ -54,74 +57,67 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                     }
                 case AddressingModes.Absolute:
                     {
-                        int address;
-                        if(CPU.EFlag)
-                            address = CPU.RAM.ReadByte(arg1);
-                        else
-                            address = CPU.RAM.ReadByte(arg1) | (CPU.DBR << 16);
+                        int address = Absolute(arg1);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.AbsoluteLong:
                     {
+                        int address = AbsoluteLong(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.DirectIndirectIndexed:
                     {
+                        int address = DirectIndirectIndexed(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.DirectIndirect:
                     {
-                        int address;
-                        if (CPU.EFlag)
-                        {
-                            int addressPointerLow = CPU.DirectPage.ReadByte(arg1);
-                            int addressPointerHigh = CPU.DirectPage.ReadByte(arg1 + 1);
-                            address = addressPointerLow | addressPointerHigh << 8;
-                        }
-                        else
-                        {
-                            int addressPointerLow = CPU.DirectPage.ReadByte(arg1 + CPU.D);
-                            int addressPointerHigh = CPU.DirectPage.ReadByte(arg1 + CPU.D + 1);
-                            address = (addressPointerLow | addressPointerHigh << 8) | (CPU.DBR << 16);
-                        }
+                        int address = DirectIndirect(arg1);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.StackRelativeIndirectIndexed:
                     {
+                        int address = StackRelativeIndirectIndexed(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.DirectIndexedX:
                     {
-
+                        int address = DirectIndexedX(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.DirectIndirectIndexedLong:
                     {
+                        int address = DirectIndirectIndexedLong(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.AbsoluteIndexedX:
                     {
-                        int X = CPU.XFlag ? CPU.X & 0xFF : CPU.X; // Si x = 1 (donc X sur 8bits) on garde que le low byte
-                        int address = (CPU.RAM.ReadByte(arg1) | (CPU.DBR << 16)) + CPU.X;
+                        int address = AbsoluteIndexedX(arg1);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.AbsoluteIndexedY:
                     {
-                        int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
-                        int address = (CPU.RAM.ReadByte(arg1) | (CPU.DBR << 16)) + CPU.Y;
+                        int address = AbsoluteIndexedY(arg1);
                         value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 case AddressingModes.AbsoluteIndexedLong:
                     {
+                        int address = AbsoluteIndexedLong(arg1);
+                        value = CPU.RAM.ReadByte(address);
                         break;
                     }
                 default:
                     {
-                        break;
+                        throw new InvalidOperationException("Addressing mode unknow for this instruction");
                     }
             }
             Execute(value);
