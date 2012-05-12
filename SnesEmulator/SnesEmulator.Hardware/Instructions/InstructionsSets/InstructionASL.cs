@@ -110,12 +110,14 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
         {
             if (CPU.MFlag)
             {
+                CPU.CarryFlag = Convert.ToBoolean((value >> 7) & 1);
                 value = (value << 1) & 0xFF;
                 CPU.RAM.WriteByte(address, Convert.ToByte(value));
             }
             else
             {
                 byte[] data = new byte[2];
+                CPU.CarryFlag = Convert.ToBoolean((value >> 15) & 1);
                 value = (value << 1) & 0xFFFF;
                 data[0] = Convert.ToByte(value & 0xFF);
                 data[1] = Convert.ToByte((value >> 8) & 0xFF);
