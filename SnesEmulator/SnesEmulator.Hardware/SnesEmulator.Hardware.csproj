@@ -44,6 +44,8 @@
     <Compile Include="CPU.cs" />
     <Compile Include="Instructions\InstructionDecodeContext.cs" />
     <Compile Include="Instructions\InstructionsSets\GenericInstruction.cs" />
+    <Compile Include="Instructions\InstructionsSets\InstructionAND.cs" />
+    <Compile Include="Instructions\InstructionsSets\InstructionASL.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionBRK.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionJMP.cs" />
     <Compile Include="InstructionsDecodeTable.cs" />

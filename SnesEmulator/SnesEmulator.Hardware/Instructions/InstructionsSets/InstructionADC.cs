@@ -26,26 +26,26 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                 case AddressingModes.DirectIndexedIndirect:
                     {
                         int address = DirectIndexedIndirect(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.StackRelative:
                     {
                         // Cet adressage n'existe pas en mode émulation
                         int address = StackRelative(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.Direct:
                     {
                         int address = Direct(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.DirectIndirectLong:
                     {
                         int address = DirectIndirectLong(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.ImmediateMemoryFlag:
@@ -58,66 +58,66 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
                 case AddressingModes.Absolute:
                     {
                         int address = Absolute(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.AbsoluteLong:
                     {
                         int address = AbsoluteLong(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.DirectIndirectIndexed:
                     {
                         int address = DirectIndirectIndexed(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.DirectIndirect:
                     {
                         int address = DirectIndirect(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.StackRelativeIndirectIndexed:
                     {
                         int address = StackRelativeIndirectIndexed(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.DirectIndexedX:
                     {
                         int address = DirectIndexedX(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.DirectIndirectIndexedLong:
                     {
                         int address = DirectIndirectIndexedLong(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.AbsoluteIndexedX:
                     {
                         int address = AbsoluteIndexedX(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.AbsoluteIndexedY:
                     {
                         int address = AbsoluteIndexedY(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 case AddressingModes.AbsoluteIndexedLong:
                     {
                         int address = AbsoluteIndexedLong(arg1);
-                        value = CPU.RAM.ReadByte(address);
+                        value = ReadAddressedValue(address);
                         break;
                     }
                 default:
                     {
-                        throw new InvalidOperationException("Addressing mode unknown for this instruction");
+                        throw new InvalidOperationException("Addressing mode unknown for instruction ADC");
                     }
             }
             Execute(value);
@@ -165,7 +165,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 
                 default:
                     {
-                        throw new InvalidOperationException("Addressing mode unknown for this instruction");
+                        throw new InvalidOperationException("Addressing mode unknown for instruction ADC");
                     }
             }
         }

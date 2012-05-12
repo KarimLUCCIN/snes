@@ -35,7 +35,7 @@ namespace SnesEmulator.Hardware
         public bool NegativeFlag { get; private set; }
         public bool ZeroFlag { get; private set; }
         public bool OverflowFlag { get; private set; }
-        public bool CarryFlag { get; private set; }
+        public bool CarryFlag { get; set; }
         public bool EFlag { get; set; }
 
         public bool BreakFlag { get; set; } // Emulation mode
