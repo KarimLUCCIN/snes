@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 {
-    public class InstructionADC : Instruction
+    class InstructionAND : Instruction
     {
-        public InstructionADC(CPU cpu, AddressingModes addressingMode)
+        public InstructionAND(CPU cpu, AddressingModes addressingMode)
             : base(cpu, OpCodes.ADC, addressingMode)
         {
 
@@ -172,25 +172,11 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 
         protected void Execute(int value)
         {
-            if (CPU.CarryFlag)
-                value++;
-            CPU.ACC += value;
+            CPU.ACC &= value;
         }
 
         protected void SetRegisters()
         {
-            CPU.SetCarryFlag(CPU.ACC);
-            CPU.SetOverflowFlag(CPU.ACC);
-            if (CPU.MFlag)
-            {
-                if (CPU.ACC > Mode8Bits.Max)
-                    CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
-            }
-            else
-            {
-                if (CPU.ACC > Mode16Bits.Max)
-                    CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
-            }
             CPU.SetZeroFlag(CPU.ACC);
             CPU.SetNegativeFlag(CPU.ACC);
         }
