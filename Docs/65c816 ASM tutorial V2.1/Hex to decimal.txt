@@ -1,0 +1,14 @@
+Here is a little script that spel werdz rite wrote in C#, to 
+generate hex and decimal numbers up to 0xFFFF/65535. It will output
+the results in the C: drive in HTML <tr><td> format. It will also show how long the process took.
+
+	string[] Lines = new string[0x10000];
+	long a = DateTime.Now.Ticks;
+	for (int i = 0; i < 0x10000; i++)
+		Lines[i] = "<tr><td>0x" + i.ToString("X4") + "</td><td>" + i.ToString() + "</td></tr>";
+	long b = DateTime.Now.Ticks;
+	MessageBox.Show(((b - a) / 10000).ToString() + "ms");
+	System.IO.File.WriteAllLines("C:\\Text.txt", Lines);
+
+Put the output between a <table></table> tag. Additionally, you could add
+a border attribute, and center the table too.
