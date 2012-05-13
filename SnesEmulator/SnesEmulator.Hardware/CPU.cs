@@ -92,6 +92,8 @@ namespace SnesEmulator.Hardware
         public bool OverflowFlag { get; private set; }
         public bool CarryFlag { get; set; }
         public bool EFlag { get; set; }
+        public bool DecimalFlag { get; set; }
+        public bool IRQDisabledFlag { get; set; }
 
         public bool BreakFlag { get; set; } // Emulation mode
 
@@ -147,6 +149,7 @@ namespace SnesEmulator.Hardware
             this.RAM = RAM;
             ACC = X = Y = PBR = DBR = 0x00;
             EFlag = true; // Le processeur démarre en mode Emulation
+            XFlag = MFlag = true; // ACC, X et Y sur 8 bits
             D = 0x00; // La Direct Page correspond à la Zero Page en mode émulation. Elle pointe donc à l'adresse 0
             SP = 0x100; // Le stack pointer est à 0x100 en mode émulation
             //M = 1;
@@ -154,9 +157,6 @@ namespace SnesEmulator.Hardware
             DirectPage = new MemoryBin(RAM.Container, RAM.Start, 256); 
 
             DecodeTable = new InstructionsDecodeTable(this);
-
-            // Assure qu'on est bien en mode émulation
-            SwitchFromNativeToEmulationMode();
         }
 
         public void SwitchFromEmulationToNativeMode()
