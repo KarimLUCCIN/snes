@@ -70,7 +70,7 @@ namespace SnesEmulator
                         });
                         snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 24);
                         snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 26);
-                        snes.Encoder.Write(romBin, ref writeOffset, OpCodes.AND, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
+                        snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
                         snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, (i) =>
                         {
                             Debug.Assert(snes.CPU.ACC == 24 + 26);
