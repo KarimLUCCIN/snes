@@ -6,3 +6,4 @@ obj/
 *.sdf
 *.suo
 /References
+/SnesEmulator/TestResults
