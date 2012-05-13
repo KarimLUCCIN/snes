@@ -52,6 +52,27 @@ namespace SnesEmulator
                     {
                         snes.Decoder.Decode(romBin, 0).Print(wr);
 
+                        wr.WriteLine();
+                        wr.WriteLine();
+                        wr.WriteLine();
+                        wr.WriteLine("ALTERATION DU DEBUT");
+                        wr.WriteLine();
+                        wr.WriteLine();
+
+                        int writeOffset = 0;
+
+                        for (int i = 0; i < 8; i++)
+                            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.NOP);
+
+                        snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 24);
+                        snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 26);
+                        snes.Encoder.Write(romBin, ref writeOffset, OpCodes.AND, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
+                        snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
+
+                        snes.Decoder.Decode(romBin, 0).Print(wr);
+
+                        snes.Interpreter.Interpret(romBin, 0);
+
                         wr.Flush();
                         decodeOut.Flush();
                     }

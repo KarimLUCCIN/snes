@@ -35,6 +35,11 @@ namespace SnesEmulator.Hardware.Instructions
             get { return cpu; }
         }
 
+        /// <summary>
+        /// Code hexa de l'instruction (spécifié par le DecodeTable)
+        /// </summary>
+        public byte AssociatedHexCode { get; set; }
+
         public Instruction(CPU cpu, OpCodes code, AddressingModes addrMode)
         {
             this.cpu = cpu;

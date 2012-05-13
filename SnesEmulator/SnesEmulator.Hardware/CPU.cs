@@ -4,11 +4,43 @@ using System.Linq;
 using System.Text;
 using SnesEmulator.Hardware.Memory;
 using SnesEmulator.Hardware.Instructions;
+using System.Diagnostics;
 
 namespace SnesEmulator.Hardware
 {
     public class CPU
     {
+
+        public string PrintStatus()
+        {
+            string reportStatus = "Registers:\n";
+            reportStatus += String.Format("ACC : {0}\n", ACC);
+            reportStatus += String.Format("B : {0}\n", B);
+            reportStatus += String.Format("SP : {0}\n", SP);
+            reportStatus += String.Format("X : {0}\n", X);
+            reportStatus += String.Format("Y : {0}\n", Y);
+            reportStatus += String.Format("D : {0}\n", D);
+            reportStatus += String.Format("DBR : {0}\n", DBR);
+            reportStatus += String.Format("PBR : {0}\n", PBR);
+            reportStatus += String.Format("PC : {0}\n", PC);
+            reportStatus += "\n\n";
+
+            reportStatus += "Flags:\n";
+            reportStatus += String.Format("NegativeFlag : {0}\n", NegativeFlag);
+            reportStatus += String.Format("ZeroFlag : {0}\n", ZeroFlag);
+            reportStatus += String.Format("OverflowFlag : {0}\n", OverflowFlag);
+            reportStatus += String.Format("CarryFlag : {0}\n", CarryFlag);
+            reportStatus += String.Format("EFlag : {0}\n\n", EFlag);
+
+            reportStatus += String.Format("BreakFlag : {0}\n\n", BreakFlag);
+
+            reportStatus += String.Format("MFlag : {0}\n", MFlag);
+            reportStatus += String.Format("XFlag : {0}\n", XFlag);
+
+            Debug.WriteLine(reportStatus);
+
+            return reportStatus;
+        }
         
         #region Registers
 
@@ -22,15 +54,15 @@ namespace SnesEmulator.Hardware
         public int DBR { get; set; }
         public int PBR { get; set; }
 
-
-        #endregion
-
-        #region Flags
-
         /// <summary>
         /// Je le met direct, sans propriété, afin de toujours pouvoir le passer en ref sans se prendre la tête
         /// </summary>
         public int PC;
+
+
+        #endregion
+
+        #region Flags
 
         public bool NegativeFlag { get; private set; }
         public bool ZeroFlag { get; private set; }
@@ -80,8 +112,15 @@ namespace SnesEmulator.Hardware
 
         public MemoryBin DirectPage { get; set; }
 
-        public CPU(MemoryBin RAM)
+        public SnesPlatform Platform { get; private set; }
+
+        public CPU(SnesPlatform platform, MemoryBin RAM)
         {
+            if (platform == null)
+                throw new ArgumentNullException("platform");
+
+            Platform = platform;
+
             this.RAM = RAM;
             ACC = X = Y = PBR = DBR = 0x00;
             EFlag = true; // Le processeur démarre en mode Emulation
@@ -92,6 +131,9 @@ namespace SnesEmulator.Hardware
             DirectPage = new MemoryBin(RAM.Container, RAM.Start, 256); 
 
             DecodeTable = new InstructionsDecodeTable(this);
+
+            // Assure qu'on est bien en mode émulation
+            SwitchFromNativeToEmulationMode();
         }
 
         public void SwitchFromEmulationToNativeMode()

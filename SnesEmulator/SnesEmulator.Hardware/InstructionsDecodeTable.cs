@@ -44,14 +44,6 @@ namespace SnesEmulator.Hardware
             }
         }
 
-        public enum ArgumentType : byte
-        {
-            None,
-            I1,
-            I2,
-            I3
-        }
-
         public Instruction GenericInstCustom(OpCodes code, AddressingModes addrMode, Action<GenericInstruction, int, int> exec, GenericInstruction.DecodeArgumentsFunctionDelegate decodeDelegate = null)
         {
             return new GenericInstruction(cpu, code, addrMode, decodeDelegate != null) { runFunction = exec, decodeArgumentsFunction = decodeDelegate };
@@ -109,7 +101,10 @@ namespace SnesEmulator.Hardware
             else if (KnownInstructions[code] != null)
                 throw new InvalidOperationException(String.Format("Une instruction avec le code {0} existe déjà", code.ToString("X")));
             else
+            {
                 KnownInstructions[code] = instruction;
+                instruction.AssociatedHexCode = (byte)code;
+            }
         }
 
         private void LoadKnownInstructions()
@@ -469,7 +464,11 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x9F, GenericInst(Hardware.OpCodes.STA, Hardware.AddressingModes.AbsoluteIndexedLong, (sender, p1, p2) => { }, ArgumentType.I3));
 
             // STP
-            RegisterKnownInstruction(0xDB, GenericInst(Hardware.OpCodes.STP, Hardware.AddressingModes.Implied, (sender, p1, p2) => { }));
+            RegisterKnownInstruction(0xDB, GenericInst(Hardware.OpCodes.STP, Hardware.AddressingModes.Implied, (sender, p1, p2) => {
+#warning DEBUG
+                cpu.Platform.Interpreter.Stop = true;
+                cpu.PrintStatus();
+            }));
 
             // STX
             RegisterKnownInstruction(0x86, GenericInst(Hardware.OpCodes.STX, Hardware.AddressingModes.Direct, (sender, p1, p2) => { }, ArgumentType.I1));

@@ -32,6 +32,16 @@ namespace SnesEmulator.Hardware
             get { return decoder; }
         }
 
+        private InstructionsEncoder encoder;
+
+        /// <summary>
+        /// Petit écriveur d'instructions
+        /// </summary>
+        public InstructionsEncoder Encoder
+        {
+            get { return encoder; }
+        }
+
         private LiveInstructionsDecoder interpreter;
 
         /// <summary>
@@ -61,9 +71,10 @@ namespace SnesEmulator.Hardware
 
             memory = new MemoryContainer(memorySize);
 
-            cpu = new CPU(new MemoryBin(memory, romSize, ramSize));
+            cpu = new CPU(this, new MemoryBin(memory, romSize, ramSize));
 
             decoder = new InstructionsDecoder(cpu);
+            encoder = new InstructionsEncoder(cpu);
             interpreter = new LiveInstructionsDecoder(this);
         }
     }
