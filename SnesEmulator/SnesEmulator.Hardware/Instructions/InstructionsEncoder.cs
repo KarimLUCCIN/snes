@@ -28,6 +28,43 @@ namespace SnesEmulator.Hardware.Instructions
         }
 
         /// <summary>
+        /// Efface les callback associés au processeur
+        /// </summary>
+        public void ClearCallbackInvokes()
+        {
+            cpu.InstrumentationCallBacksClear();
+        }
+
+        /// <summary>
+        /// Utilise une instruction spéciale qui va appeler un code à un moment clef de l'exécution
+        /// </summary>
+        /// <remarks>ATTENTION : Il n'y a que 254 slots disponibles en l'état. Pour effacer les associations, utiliser ClearCallbackInvokes</remarks>
+        /// <param name="bin"></param>
+        /// <param name="offset"></param>
+        /// <param name="callback"></param>
+        public void WriteCallbackInvoke(MemoryBin bin, ref int offset, Action<Instruction> callback)
+        {
+            if (callback == null)
+                return;
+
+            int slot = 0;
+
+            for(slot = 0; slot <= 254;slot++)
+            {
+                if (cpu.InstrumentationCallBacks[slot] == null)
+                    break;
+            }
+
+            if (slot > 254)
+                throw new InvalidOperationException("Tous les slots de callback sont utilisés. Impossible d'encoder cette instruction");
+            else
+            {
+                cpu.InstrumentationCallBacks[slot] = callback;
+                Write(bin, ref offset, OpCodes.WDM, param1Type: ArgumentType.I1, param1: slot + 1);
+            }
+        }
+
+        /// <summary>
         /// Ecrit une instruction. C'est un peut chiant car il faut spécifier à la fois l'instruction, l'addrMode, le type des args et les args mais bon,
         /// pour l'instant ça devrait faire l'affaire
         /// </summary>

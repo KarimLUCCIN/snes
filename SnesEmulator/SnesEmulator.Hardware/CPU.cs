@@ -10,6 +10,7 @@ namespace SnesEmulator.Hardware
 {
     public class CPU
     {
+        #region Debug
 
         public string PrintStatus()
         {
@@ -41,6 +42,28 @@ namespace SnesEmulator.Hardware
 
             return reportStatus;
         }
+
+        private Action<Instruction>[] instrumentationCallBacks = new Action<Instruction>[255];
+
+        /// <summary>
+        /// Callback d'instructions qui peuvent être branchés en utilisant l'instruction WDM.
+        /// Les plages valides sont de 0 à 254
+        /// </summary>
+        /// <remarks>ATTENTION : Seulement de 0 à 254</remarks>
+        public Action<Instruction>[] InstrumentationCallBacks
+        {
+            get { return instrumentationCallBacks; }
+        }
+
+        /// <summary>
+        /// Efface tous les callback
+        /// </summary>
+        public void InstrumentationCallBacksClear()
+        {
+            instrumentationCallBacks = new Action<Instruction>[255];
+        }
+
+        #endregion
         
         #region Registers
 
