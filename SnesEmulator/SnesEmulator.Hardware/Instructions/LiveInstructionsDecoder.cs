@@ -95,6 +95,14 @@ namespace SnesEmulator.Hardware.Instructions
             set { lastInterpretException = value; }
         }
 
+        private bool rethrowExecutionExceptions = false;
+
+        public bool RethrowExecutionExceptions
+        {
+            get { return rethrowExecutionExceptions; }
+            set { rethrowExecutionExceptions = value; }
+        }
+        
         private void InterpretThreadFunction()
         {
             try
@@ -125,6 +133,9 @@ namespace SnesEmulator.Hardware.Instructions
             }
             catch (Exception ex)
             {
+                if (rethrowExecutionExceptions)
+                    throw;
+
                 lastInterpretException = ex;
                 Debug.WriteLine("Interpret Failure");
                 Debug.WriteLine(ex);
@@ -136,7 +147,8 @@ namespace SnesEmulator.Hardware.Instructions
         /// </summary>
         /// <param name="bin">Mémoire à utiliser pour la référence</param>
         /// <param name="startAddress">Adresse, ou rien pour utiliser le PC actuel</param>
-        public void Interpret(MemoryBin bin, int startAddress = -1)
+        /// <param name="separateThread">true pour lancer dans un thread séparé, false sinon</param>
+        public void Interpret(MemoryBin bin, int startAddress = -1, bool separateThread = true)
         {
             if (bin == null)
                 throw new ArgumentNullException("bin");
@@ -153,13 +165,20 @@ namespace SnesEmulator.Hardware.Instructions
 
                 interpreterMemory = bin;
 
-                interpretThread = new Thread(new ThreadStart(InterpretThreadFunction));
-                interpretThread.Name = String.Format("SNES Interpreter - {0}", DateTime.Now.ToLongTimeString());
+                if (separateThread)
+                {
+                    interpretThread = new Thread(new ThreadStart(InterpretThreadFunction));
+                    interpretThread.Name = String.Format("SNES Interpreter - {0}", DateTime.Now.ToLongTimeString());
 
-                // Si on kill le programme, ça va killer aussi le thread ... c'est bien ça
-                interpretThread.IsBackground = true;
+                    // Si on kill le programme, ça va killer aussi le thread ... c'est bien ça
+                    interpretThread.IsBackground = true;
 
-                interpretThread.Start();
+                    interpretThread.Start();
+                }
+                else
+                {
+                    InterpretThreadFunction();
+                }
             }
         }
     }

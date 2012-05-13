@@ -9,7 +9,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnesEmulator.RomReader", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnesEmulator.Hardware", "SnesEmulator.Hardware\SnesEmulator.Hardware.csproj", "{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnesEmulator.Tests", "SnesEmulator.Tests\SnesEmulator.Tests.csproj", "{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B19A0368-30F2-47DD-A73A-1D458B75BCA1}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+		SnesEmulator.vsmdi = SnesEmulator.vsmdi
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = SnesEmulator.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -69,6 +81,18 @@ Global
 		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|Win32.ActiveCfg = Release|Any CPU
 		{CE8B5E3B-DED3-4A13-9D1E-3E4176514CE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Release|Win32.ActiveCfg = Release|Any CPU
+		{454F2E7C-D50A-45FF-8127-55A3DFC1D6EB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
