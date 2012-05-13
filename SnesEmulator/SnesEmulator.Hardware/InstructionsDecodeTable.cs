@@ -185,7 +185,7 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x70, GenericInst(Hardware.OpCodes.BVS, Hardware.AddressingModes.Relative, (sender, p1, p2) => { }, ArgumentType.I1));
           
             // CLEAR
-            RegisterKnownInstruction(0x18, GenericInst(Hardware.OpCodes.CLC, Hardware.AddressingModes.Implied, (sender, p1, p2) => { }));
+            RegisterKnownInstruction(0x18, GenericInst(Hardware.OpCodes.CLC, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.CarryFlag = false; }));
             RegisterKnownInstruction(0xD8, GenericInst(Hardware.OpCodes.CLD, Hardware.AddressingModes.Implied, (sender, p1, p2) => { }));
             RegisterKnownInstruction(0x58, GenericInst(Hardware.OpCodes.CLI, Hardware.AddressingModes.Implied, (sender, p1, p2) => { }));
             RegisterKnownInstruction(0xB8, GenericInst(Hardware.OpCodes.CLV, Hardware.AddressingModes.Implied, (sender, p1, p2) => { }));
@@ -436,7 +436,7 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0xFF, GenericInst(Hardware.OpCodes.SBC, Hardware.AddressingModes.AbsoluteIndexedLong, (sender, p1, p2) => { }, ArgumentType.I3));
             
             // SEC
-            RegisterKnownInstruction(0x38, GenericInst(Hardware.OpCodes.SEC, Hardware.AddressingModes.Implied, (sender, p1, p2) => { }));
+            RegisterKnownInstruction(0x38, GenericInst(Hardware.OpCodes.SEC, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.CarryFlag = true; }));
 
             // SED
             RegisterKnownInstruction(0xF8, GenericInst(Hardware.OpCodes.SED, Hardware.AddressingModes.Implied, (sender, p1, p2) => { }));
