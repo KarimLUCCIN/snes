@@ -203,5 +203,33 @@ namespace SnesEmulator.Hardware
             context.MFlag = MFlag;
             context.XFlag = XFlag;
         }
+
+        public int BCDConversion(int value)
+        {
+            double result = 0;
+            int i = 1;
+            string hexValue = value.ToString();
+            foreach (char c in hexValue)
+            {
+                result += char.GetNumericValue(c) * Math.Pow(16, hexValue.Length - i);
+                i++;
+            }
+            return (int)result;
+        }
+
+        public int Decimal16bit(int value)
+        {
+            int result = 0;
+            int mult = 1;
+            string hexValue = value.ToString("X");
+            IEnumerable<char> rString = hexValue.Reverse();
+            foreach (char c in rString)
+            {
+                int digit = (int)Convert.ToInt32(c.ToString(), 16) * mult;
+                result += digit;
+                mult = mult * 10;
+            }
+            return result;
+        }
     }
 }

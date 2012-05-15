@@ -174,7 +174,33 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
         {
             if (CPU.CarryFlag)
                 value++;
-            CPU.ACC += value;
+            if (CPU.DecimalFlag)
+            {
+                if (CPU.MFlag)
+                {
+                    int tmp = CPU.ACC;
+                    if (tmp > 0x10)
+                        tmp = Convert.ToInt32(tmp.ToString("X"), 10);
+                    CPU.ACC = CPU.BCDConversion(tmp + value);
+                    if (CPU.ACC >= 0x100)
+                        CPU.ACC = CPU.ACC - 0x100;
+                }
+                else
+                {
+                    int tmp = CPU.ACC;
+                    if (tmp > 0x10)
+                        tmp = Convert.ToInt32(tmp.ToString("X"), 10);
+                    int sum = CPU.Decimal16bit(value) + tmp;
+                    CPU.ACC = CPU.BCDConversion(sum);
+                    if (CPU.ACC >= 0x9999)
+                    {
+                        CPU.ACC &= 0xFFFF;
+                        CPU.CarryFlag = true;
+                    }
+                }
+            }
+            else
+                CPU.ACC += value;
         }
 
         protected void SetRegisters()
