@@ -40,7 +40,7 @@ namespace SnesEmulator.Tests
             });
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 24);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 26);
-            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.AND, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, (i) =>
             {
                 Assert.AreEqual(24 + 26, snes.CPU.ACC);
@@ -72,6 +72,10 @@ namespace SnesEmulator.Tests
             InitTestContext(out snes, out romBin, out writeOffset);
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.SED);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, (i) =>
+            {
+                Assert.AreEqual(true, snes.CPU.DecimalFlag);
+            });
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.CLC);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0x02);
@@ -85,6 +89,10 @@ namespace SnesEmulator.Tests
                 Assert.AreEqual(15, snes.CPU.ACC);
             });
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.CLD);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, (i) =>
+            {
+                Assert.AreEqual(false, snes.CPU.DecimalFlag);
+            });
 
             snes.Interpreter.Interpret(romBin, 0, false);
         }
