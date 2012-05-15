@@ -8,7 +8,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
     public class InstructionJMP : Instruction
     {
         public InstructionJMP(CPU cpu, AddressingModes addressingMode)
-            : base(cpu, OpCodes.ADC, addressingMode)
+            : base(cpu, OpCodes.JMP, addressingMode)
         {
 
         }
