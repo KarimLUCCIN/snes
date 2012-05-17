@@ -119,5 +119,76 @@ namespace SnesEmulator.Tests
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
             snes.Interpreter.Interpret(romBin, 0, false);
         }
+
+        [TestMethod]
+        public void TestStackLiteral()
+        {
+            /* Teste le stack, litéralement, sans instructions du CPU */
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            var cpu = snes.CPU;
+
+            cpu.StackPush(10, ArgumentType.I1);
+            cpu.StackPush(20, ArgumentType.I1);
+            cpu.StackPush(30, ArgumentType.I1);
+            cpu.StackPush(0xFF7, ArgumentType.I2);
+            cpu.StackPush(40, ArgumentType.I1);
+
+            Assert.AreEqual(40, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(40, cpu.StackPull(ArgumentType.I1));
+
+            Assert.AreEqual(0xFF7, cpu.StackPeek(ArgumentType.I2));
+            Assert.AreEqual(0xFF7, cpu.StackPull(ArgumentType.I2));
+
+            Assert.AreEqual(30, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(30, cpu.StackPull(ArgumentType.I1));
+
+            Assert.AreEqual(20, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(20, cpu.StackPull(ArgumentType.I1));
+
+            Assert.AreEqual(10, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(10, cpu.StackPull(ArgumentType.I1));
+        }
+
+        [TestMethod]
+        public void TestStackLiteralWithCPUModeSwitch()
+        {
+            /* Teste le stack, litéralement, sans instructions du CPU */
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            var cpu = snes.CPU;
+            cpu.SwitchFromEmulationToNativeMode();
+
+            cpu.StackPush(10, ArgumentType.I1);
+            cpu.StackPush(20, ArgumentType.I1);
+            cpu.StackPush(30, ArgumentType.I1);
+            cpu.StackPush(0xFF7, ArgumentType.I2);
+            cpu.StackPush(40, ArgumentType.I1);
+
+            cpu.SwitchFromNativeToEmulationMode();
+
+            Assert.AreEqual(40, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(40, cpu.StackPull(ArgumentType.I1));
+
+            Assert.AreEqual(0xFF7, cpu.StackPeek(ArgumentType.I2));
+            Assert.AreEqual(0xFF7, cpu.StackPull(ArgumentType.I2));
+
+            Assert.AreEqual(30, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(30, cpu.StackPull(ArgumentType.I1));
+
+            Assert.AreEqual(20, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(20, cpu.StackPull(ArgumentType.I1));
+
+            Assert.AreEqual(10, cpu.StackPeek(ArgumentType.I1));
+            Assert.AreEqual(10, cpu.StackPull(ArgumentType.I1));
+        }
     }
 }

@@ -64,12 +64,12 @@ namespace SnesEmulator.Hardware
         }
 
         #endregion
-        
+
         #region Registers
 
         public int ACC = 0;
         public int B { get; set; } // Accumulateur B "caché" seulement en mode Emulation
-        public int SP { get; set; } // Stack pointer
+        public int SP = 0; // Stack pointer
         public int X { get; set; }
         public int Y { get; set; }
         //public int M { get; set; } Etre ou ne pas être ? Telle est la question
@@ -155,17 +155,17 @@ namespace SnesEmulator.Hardware
 
             Platform = platform;
 
-            Reset();
-
             // TODO vérifier les plages
             DirectPage = new MemoryBin(platform.Memory, 0, 256);
 
             RAM = new SnesMemoryMappingBin(platform.Memory);
 
-            NativeStackBin = new MemoryBin(platform.Memory, 0x7E0000, 0x00FFFF);
-            EmulationStackBin = new MemoryBin(platform.Memory, NativeStackBin.Start + 0x100, 0xFF);
+            NativeStackBin = new MemoryBin(platform.Memory, 0x7E0000, 0x00FFFF + 1);
+            EmulationStackBin = new MemoryBin(platform.Memory, NativeStackBin.Start + 0x100, 0xFF + 1);
 
             DecodeTable = new InstructionsDecodeTable(this);
+
+            Reset();
         }
 
         public void Reset()
@@ -174,9 +174,10 @@ namespace SnesEmulator.Hardware
             EFlag = true; // Le processeur démarre en mode Emulation
             XFlag = MFlag = true; // ACC, X et Y sur 8 bits
             D = 0x00; // La Direct Page correspond à la Zero Page en mode émulation. Elle pointe donc à l'adresse 0
-            SP = 0x100; // Le stack pointer est à 0x100 en mode émulation
             //M = 1;
             PC = 0;
+
+            SP = EmulationStackBin.Length-1;
         }
 
         public void SwitchFromEmulationToNativeMode()
@@ -184,8 +185,10 @@ namespace SnesEmulator.Hardware
             CarryFlag = EFlag;
             EFlag = false;
             XFlag = MFlag = true; // Les flags X et M sont forcés à 1 pour rester sur 8 bits
-            // ... Modifier le SP ?
             // XFlag et MFlag deviennent disponibles et BreakFlag indisponible
+
+            // TODO Vérifier le comportement du Stack
+            SP = 0x100 + (byte)SP;
         }
 
         public void SwitchFromNativeToEmulationMode()
@@ -196,10 +199,12 @@ namespace SnesEmulator.Hardware
             Y = Y & 0xFF; // Pareil pour Y
             B = (ACC >> 8) & 0xFF; // ACC garde son octet fort dans le registre "caché" B ...
             ACC = ACC & 0xFF;
-            SP = 0x100; // Stack remise à la page 1 du Data Bank 0
             // La Direct Page passe à 0x00 normalement, mais si on revient en Native mode, elle récupère sa valeur d'avant ou garde 0 ? => A vérifier.
             // XFlag et MFlag ne doivent plus être utilisés en mode Emulation, et BreakFlag devient dispo
             XFlag = MFlag = true;
+
+            // TODO Vérifier le comportement du Stack
+            SP = (byte)SP;
         }
 
         /// <summary>
@@ -224,32 +229,67 @@ namespace SnesEmulator.Hardware
             context.XFlag = XFlag;
         }
 
-        public int BCDConversion(int value)
+        #region Stack
+
+        public void StackPush(int value, ArgumentType argType)
         {
-            double result = 0;
-            int i = 1;
-            string hexValue = value.ToString();
-            foreach (char c in hexValue)
+            switch (argType)
             {
-                result += char.GetNumericValue(c) * Math.Pow(16, hexValue.Length - i);
-                i++;
+                case ArgumentType.I1:
+                    CurrentStackBin.WriteInt1(SP, (byte)value);
+                    SP--;
+                    break;
+                case ArgumentType.I2:
+                    CurrentStackBin.WriteInt1(SP, (byte)value);
+                    SP--;
+
+                    CurrentStackBin.WriteInt1(SP, (byte)(value >> 8));
+                    SP--;
+                    break;
+                case ArgumentType.I3:
+                case ArgumentType.None:
+                default:
+                    throw new NotSupportedException(argType.ToString());
             }
-            return (int)result;
         }
 
-        public int Decimal16bit(int value)
+        public int StackPull(ArgumentType argType)
         {
-            int result = 0;
-            int mult = 1;
-            string hexValue = value.ToString("X");
-            IEnumerable<char> rString = hexValue.Reverse();
-            foreach (char c in rString)
+            switch (argType)
             {
-                int digit = (int)Convert.ToInt32(c.ToString(), 16) * mult;
-                result += digit;
-                mult = mult * 10;
+                case ArgumentType.I1:
+                    SP++;
+                    return CurrentStackBin.ReadInt1(SP);
+                case ArgumentType.I2:
+                    SP++;
+                    int tmp = CurrentStackBin.ReadInt1(SP) << 8;
+
+                    SP++;
+                    tmp |= CurrentStackBin.ReadInt1(SP);
+
+                    return tmp;
+                case ArgumentType.I3:
+                case ArgumentType.None:
+                default:
+                    throw new NotSupportedException(argType.ToString());
             }
-            return result;
         }
+
+        public int StackPeek(ArgumentType argType, int offset = 0)
+        {
+            switch (argType)
+            {
+                case ArgumentType.I1:
+                    return CurrentStackBin.ReadInt1(SP + 1 + offset);
+                case ArgumentType.I2:
+                    return CurrentStackBin.ReadInt1(SP + 1 + offset) << 8 | CurrentStackBin.ReadInt1(SP + 2 + offset);
+                case ArgumentType.I3:
+                case ArgumentType.None:
+                default:
+                    throw new NotSupportedException(argType.ToString());
+            }
+        }
+
+        #endregion
     }
 }

@@ -65,7 +65,7 @@ namespace SnesEmulator.Hardware
         public SnesPlatform()
         {
             //Taille maximale addressable par la SNES
-            const int mappedMemorySize = 0x7FFFFF;
+            const int mappedMemorySize = 0x7FFFFF+1;
 
             memory = new MemoryContainer(mappedMemorySize);
 
