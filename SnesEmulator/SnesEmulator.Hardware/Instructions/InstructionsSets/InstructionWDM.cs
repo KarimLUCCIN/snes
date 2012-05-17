@@ -42,28 +42,4 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             instructionReference.param1 = DecodeInt1Argument(bin, ref offset);
         }
     }
-
-    public class InstructionNOP : Instruction
-    {
-        public InstructionNOP(CPU cpu)
-            : base(cpu, OpCodes.NOP, AddressingModes.Implied)
-        {
-
-        }
-
-        public override bool HaveArgs
-        {
-            get { return false; }
-        }
-
-        public override void Run(int arg1, int arg2)
-        {
-
-        }
-
-        public override void DecodeArguments(Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref InstructionReference instructionReference)
-        {
-            /* No Args */
-        }
-    }
 }

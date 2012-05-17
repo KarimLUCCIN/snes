@@ -55,10 +55,9 @@
     <Compile Include="Instructions\InstructionReference.cs" />
     <Compile Include="Instructions\InstructionsBin.cs" />
     <Compile Include="Instructions\InstructionsDecoder.cs" />
-    <Compile Include="Instructions\InstructionsSets\DummyInstructions.cs" />
+    <Compile Include="Instructions\InstructionsSets\InstructionWDM.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionADC.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionInvalid.cs" />
-    <Compile Include="Instructions\InstructionsSets\InstructionXBA.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionXCE.cs" />
     <Compile Include="Instructions\LiveInstructionsDecoder.cs" />
     <Compile Include="Memory\MemoryBin.cs" />

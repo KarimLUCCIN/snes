@@ -341,6 +341,111 @@ namespace SnesEmulator.Hardware.Instructions
             return arg1 + X;
         }
 
+        /// <summary>
+        /// Obtient un argument à partir de la mémoire avec le mode par défaut.
+        /// </summary>
+        /// <remarks>Avoir un mode "BlockMove" fera une exception, ce mode est spécial</remarks>
+        /// <param name="mode"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public int ResolveArgument(int param)
+        {
+            return ResolveArgument(addrMode, param);
+        }
+
+        /// <summary>
+        /// Obtient un argument à partir de la mémoire en fonction du mode sélectionné.
+        /// </summary>
+        /// <remarks>Avoir un mode "BlockMove" fera une exception, ce mode est spécial</remarks>
+        /// <param name="mode"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public int ResolveArgument(AddressingModes mode, int param)
+        {
+            switch (mode)
+            {
+                case AddressingModes.DirectIndexedIndirect:
+                    {
+                        int address = DirectIndexedIndirect(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.StackRelative:
+                    {
+                        // Cet adressage n'existe pas en mode émulation
+                        int address = StackRelative(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.Direct:
+                    {
+                        int address = Direct(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.DirectIndirectLong:
+                    {
+                        int address = DirectIndirectLong(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.ImmediateMemoryFlag:
+                case AddressingModes.ImmediateIndexFlag:
+                case AddressingModes.Immediate8Bit:
+                    {
+                        return param;
+                    }
+                case AddressingModes.Absolute:
+                    {
+                        int address = Absolute(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.AbsoluteLong:
+                    {
+                        int address = AbsoluteLong(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.DirectIndirectIndexed:
+                    {
+                        int address = DirectIndirectIndexed(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.DirectIndirect:
+                    {
+                        int address = DirectIndirect(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.StackRelativeIndirectIndexed:
+                    {
+                        int address = StackRelativeIndirectIndexed(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.DirectIndexedX:
+                    {
+                        int address = DirectIndexedX(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.DirectIndirectIndexedLong:
+                    {
+                        int address = DirectIndirectIndexedLong(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.AbsoluteIndexedX:
+                    {
+                        int address = AbsoluteIndexedX(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.AbsoluteIndexedY:
+                    {
+                        int address = AbsoluteIndexedY(param);
+                        return ReadAddressedValue(address);
+                    }
+                case AddressingModes.AbsoluteIndexedLong:
+                    {
+                        int address = AbsoluteIndexedLong(param);
+                        return ReadAddressedValue(address);
+                    }
+                default:
+                    { throw new NotSupportedException(mode.ToString()); }
+            }
+        }
+
         #endregion
     }
 }
