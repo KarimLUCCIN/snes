@@ -11,21 +11,21 @@ namespace SnesEmulator.Hardware.Memory
     /// </summary>
     public class MemoryBin
     {
-        private MemoryContainer container;
+        protected MemoryContainer container;
 
         public MemoryContainer Container
         {
             get { return container; }
         }
 
-        private int start;
+        protected int start;
 
         public int Start
         {
             get { return start; }
         }
 
-        private int length;
+        protected int length;
 
         public int Length
         {
@@ -50,7 +50,7 @@ namespace SnesEmulator.Hardware.Memory
             this.length = length;
         }
 
-        public int ReadByte(int position)
+        public virtual int ReadByte(int position)
         {
             if (position < 0 || position >= length)
                 return -1;
@@ -58,7 +58,7 @@ namespace SnesEmulator.Hardware.Memory
                 return container.Data[start + position];
         }
 
-        public void WriteByte(int position, byte value)
+        public virtual void WriteByte(int position, byte value)
         {
             if (position < 0 || position >= length)
                 throw new InvalidOperationException("Tentative d'écriture au delà de la mémoire allouée");
@@ -66,7 +66,7 @@ namespace SnesEmulator.Hardware.Memory
                 container.Data[start + position] = value;
         }
 
-        public int Read(int position, [In,Out] byte[] data, int offset, int count)
+        public virtual int Read(int position, [In,Out] byte[] data, int offset, int count)
         {
             int readable = Math.Max(0, length - position);
             count = Math.Min(readable, count);
@@ -76,7 +76,7 @@ namespace SnesEmulator.Hardware.Memory
             return count;
         }
 
-        public void Write(int position, [In] byte[] data, int offset, int count)
+        public virtual void Write(int position, [In] byte[] data, int offset, int count)
         {
             int writable = Math.Max(0, length - position);
 

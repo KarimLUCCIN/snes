@@ -135,21 +135,35 @@ namespace SnesEmulator.Hardware
 
         public MemoryBin RAM { get; private set; }
 
+        public MemoryBin NativeStackBin { get; private set; }
+
+        public MemoryBin EmulationStackBin { get; private set; }
+
+        public MemoryBin CurrentStackBin
+        {
+            get { return EFlag ? EmulationStackBin : NativeStackBin; }
+        }
+
         public MemoryBin DirectPage { get; set; }
 
         public SnesPlatform Platform { get; private set; }
 
-        public CPU(SnesPlatform platform, MemoryBin RAM)
+        public CPU(SnesPlatform platform)
         {
             if (platform == null)
                 throw new ArgumentNullException("platform");
 
             Platform = platform;
 
-            this.RAM = RAM;
             Reset();
 
-            DirectPage = new MemoryBin(RAM.Container, RAM.Start, 256); 
+            // TODO vérifier les plages
+            DirectPage = new MemoryBin(platform.Memory, 0, 256);
+
+            RAM = new SnesMemoryMappingBin(platform.Memory);
+
+            NativeStackBin = new MemoryBin(platform.Memory, 0x7E0000, 0x00FFFF);
+            EmulationStackBin = new MemoryBin(platform.Memory, NativeStackBin.Start + 0x100, 0xFF);
 
             DecodeTable = new InstructionsDecodeTable(this);
         }

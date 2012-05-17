@@ -14,7 +14,7 @@ namespace SnesEmulator.Tests
     {
         private static void InitTestContext(out SnesPlatform snes, out MemoryBin romBin, out int writeOffset)
         {
-            snes = new SnesPlatform(1024, 512);
+            snes = new SnesPlatform();
             romBin = new MemoryBin(snes.Memory, 0, snes.Memory.Length);
 
             snes.Interpreter.RethrowExecutionExceptions = true;
