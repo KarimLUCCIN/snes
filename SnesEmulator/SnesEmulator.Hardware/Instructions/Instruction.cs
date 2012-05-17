@@ -119,30 +119,21 @@ namespace SnesEmulator.Hardware.Instructions
         public byte DecodeInt1Argument(MemoryBin bin, ref int offset)
         {
             offset++;
-            return (byte)bin.ReadInt1(offset-1);
+            return bin.ReadInt1(offset - 1);
         }
 
         public short DecodeInt2Argument(MemoryBin bin, ref int offset)
         {
-            byte low, high;
-            low = (byte)bin.ReadInt1(offset);
-            high = (byte)bin.ReadInt1(offset + 1);
-
             offset += 2;
 
-            return (short)(low | high << 8);
+            return bin.ReadInt2(offset - 2);
         }
 
         public int DecodeInt3Argument(MemoryBin bin, ref int offset)
         {
-            byte a, b, c;
-            a = (byte)bin.ReadInt1(offset);
-            b = (byte)bin.ReadInt1(offset + 1);
-            c = (byte)bin.ReadInt1(offset + 2);
-
             offset += 3;
 
-            return (int)(a | b << 8 | c << 16);
+            return bin.ReadInt3(offset - 3);
         }
 
         public int DecodeI1I2ArgumentForMFlag(MemoryBin bin, ref int offset, ref InstructionDecodeContext context)
