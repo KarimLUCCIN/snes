@@ -174,33 +174,35 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
         {
             if (CPU.CarryFlag)
                 value++;
+            CPU.ACC += value;
             if (CPU.DecimalFlag)
             {
+                CPU.ACC = BCDAdjust(CPU.ACC);
                 if (CPU.MFlag)
-                {
-                    int tmp = CPU.ACC;
-                    if (tmp > 0x10)
-                        tmp = Convert.ToInt32(tmp.ToString("X"), 10);
-                    CPU.ACC = CPU.BCDConversion(tmp + value);
-                    if (CPU.ACC >= 0x100)
-                        CPU.ACC = CPU.ACC - 0x100;
-                }
+                    CPU.ACC &= 0xFF;
                 else
+                    CPU.ACC &= 0xFFFF;
+            }
+        }
+
+        private int BCDAdjust(int val) 
+        {
+            int nibbleCount = 4;
+            if (CPU.MFlag) 
+                nibbleCount = 2;
+ 	               
+            // For each 4-bit digit...
+            for (int k = 0; k < nibbleCount; k++) 
+            {
+                // Are those 4-bits larger than 9?
+                int digit = ((val & (0xF << (k * 4))) >> (k * 4));
+                if (digit > 9) 
                 {
-                    int tmp = CPU.ACC;
-                    if (tmp > 0x10)
-                        tmp = Convert.ToInt32(tmp.ToString("X"), 10);
-                    int sum = CPU.Decimal16bit(value) + tmp;
-                    CPU.ACC = CPU.BCDConversion(sum);
-                    if (CPU.ACC >= 0x9999)
-                    {
-                        CPU.ACC &= 0xFFFF;
-                        CPU.CarryFlag = true;
-                    }
+                    // If so, add 6 to the digit
+                    val += (6 << (k * 4));
                 }
             }
-            else
-                CPU.ACC += value;
+            return val;
         }
 
         protected void SetRegisters()

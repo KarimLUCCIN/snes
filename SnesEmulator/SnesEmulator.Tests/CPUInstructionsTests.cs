@@ -109,14 +109,14 @@ namespace SnesEmulator.Tests
 
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, (i) =>
             {
-                Assert.AreEqual(15, snes.CPU.ACC);
+                Assert.AreEqual(0x15, snes.CPU.ACC);
             });
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.CLD);
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, (i) =>
             {
                 Assert.AreEqual(false, snes.CPU.DecimalFlag);
             });
-
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
             snes.Interpreter.Interpret(romBin, 0, false);
         }
     }
