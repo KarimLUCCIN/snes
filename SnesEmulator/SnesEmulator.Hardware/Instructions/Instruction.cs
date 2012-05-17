@@ -119,14 +119,14 @@ namespace SnesEmulator.Hardware.Instructions
         public byte DecodeInt1Argument(MemoryBin bin, ref int offset)
         {
             offset++;
-            return (byte)bin.ReadByte(offset-1);
+            return (byte)bin.ReadInt1(offset-1);
         }
 
         public short DecodeInt2Argument(MemoryBin bin, ref int offset)
         {
             byte low, high;
-            low = (byte)bin.ReadByte(offset);
-            high = (byte)bin.ReadByte(offset + 1);
+            low = (byte)bin.ReadInt1(offset);
+            high = (byte)bin.ReadInt1(offset + 1);
 
             offset += 2;
 
@@ -136,9 +136,9 @@ namespace SnesEmulator.Hardware.Instructions
         public int DecodeInt3Argument(MemoryBin bin, ref int offset)
         {
             byte a, b, c;
-            a = (byte)bin.ReadByte(offset);
-            b = (byte)bin.ReadByte(offset + 1);
-            c = (byte)bin.ReadByte(offset + 2);
+            a = (byte)bin.ReadInt1(offset);
+            b = (byte)bin.ReadInt1(offset + 1);
+            c = (byte)bin.ReadInt1(offset + 2);
 
             offset += 3;
 
@@ -175,7 +175,7 @@ namespace SnesEmulator.Hardware.Instructions
             int value = 0;
             if (CPU.MFlag)
             {
-                value = CPU.RAM.ReadByte(address);
+                value = CPU.RAM.ReadInt1(address);
             }
             else
             {
@@ -196,14 +196,14 @@ namespace SnesEmulator.Hardware.Instructions
             int X = CPU.XFlag ? CPU.X & 0xFF : CPU.X; // Si x = 1 (donc X sur 8bits) on garde que le low byte
             if (CPU.EFlag)
             {
-                int addressPointerLow = CPU.RAM.ReadByte(arg1 + X);
-                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + X + 1);
+                int addressPointerLow = CPU.RAM.ReadInt1(arg1 + X);
+                int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + X + 1);
                 address = addressPointerLow | addressPointerHigh << 8;
             }
             else
             {
-                int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D + X);
-                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + X + 1);
+                int addressPointerLow = CPU.RAM.ReadInt1(arg1 + CPU.D + X);
+                int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + CPU.D + X + 1);
                 address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
             }
             return address;
@@ -226,9 +226,9 @@ namespace SnesEmulator.Hardware.Instructions
         protected int DirectIndirectLong(int arg1)
         {
             // Cet adressage n'existe pas en mode émulation
-            int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
-            int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
-            int addressPointerDatabank = CPU.RAM.ReadByte(arg1 + CPU.D + 2);
+            int addressPointerLow = CPU.RAM.ReadInt1(arg1 + CPU.D);
+            int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + CPU.D + 1);
+            int addressPointerDatabank = CPU.RAM.ReadInt1(arg1 + CPU.D + 2);
             return addressPointerLow | addressPointerHigh << 8 | addressPointerDatabank << 16;
         }
 
@@ -252,15 +252,15 @@ namespace SnesEmulator.Hardware.Instructions
             int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
             if (CPU.EFlag)
             {
-                int addressPointerLow = CPU.RAM.ReadByte(arg1);
-                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + 1);
+                int addressPointerLow = CPU.RAM.ReadInt1(arg1);
+                int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + 1);
                 address = addressPointerLow | addressPointerHigh << 8;
                 address += Y;
             }
             else
             {
-                int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
-                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
+                int addressPointerLow = CPU.RAM.ReadInt1(arg1 + CPU.D);
+                int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + CPU.D + 1);
                 address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
                 address += Y;
             }
@@ -272,14 +272,14 @@ namespace SnesEmulator.Hardware.Instructions
             int address;
             if (CPU.EFlag)
             {
-                int addressPointerLow = CPU.RAM.ReadByte(arg1);
-                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + 1);
+                int addressPointerLow = CPU.RAM.ReadInt1(arg1);
+                int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + 1);
                 address = addressPointerLow | addressPointerHigh << 8;
             }
             else
             {
-                int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
-                int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
+                int addressPointerLow = CPU.RAM.ReadInt1(arg1 + CPU.D);
+                int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + CPU.D + 1);
                 address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
             }
             return address;
@@ -289,8 +289,8 @@ namespace SnesEmulator.Hardware.Instructions
         {
             // Cet adressage n'existe pas en mode émulation
             int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
-            int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.SP);
-            int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.SP + 1);
+            int addressPointerLow = CPU.RAM.ReadInt1(arg1 + CPU.SP);
+            int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + CPU.SP + 1);
             int address = addressPointerLow | addressPointerHigh << 8 | CPU.DBR << 16;
             address += Y;
             return address;
@@ -309,9 +309,9 @@ namespace SnesEmulator.Hardware.Instructions
         {
             // Cet adressage n'existe pas en mode émulation
             int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc Y sur 8bits) on garde que le low byte
-            int addressPointerLow = CPU.RAM.ReadByte(arg1 + CPU.D);
-            int addressPointerHigh = CPU.RAM.ReadByte(arg1 + CPU.D + 1);
-            int addressPointerDatabank = CPU.RAM.ReadByte(arg1 + CPU.D + 2);
+            int addressPointerLow = CPU.RAM.ReadInt1(arg1 + CPU.D);
+            int addressPointerHigh = CPU.RAM.ReadInt1(arg1 + CPU.D + 1);
+            int addressPointerDatabank = CPU.RAM.ReadInt1(arg1 + CPU.D + 2);
             int address = addressPointerLow | addressPointerHigh << 8 | addressPointerDatabank << 16;
             address += Y;
             return address;

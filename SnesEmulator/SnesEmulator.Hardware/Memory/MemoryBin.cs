@@ -50,20 +50,59 @@ namespace SnesEmulator.Hardware.Memory
             this.length = length;
         }
 
-        public virtual int ReadByte(int position)
+        public virtual int ReadInt1(int position)
         {
             if (position < 0 || position >= length)
-                return -1;
+                throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
             else
                 return container.Data[start + position];
         }
 
-        public virtual void WriteByte(int position, byte value)
+        public virtual void WriteInt1(int position, byte value)
         {
             if (position < 0 || position >= length)
                 throw new InvalidOperationException("Tentative d'écriture au delà de la mémoire allouée");
             else
                 container.Data[start + position] = value;
+        }
+
+        public virtual short ReadInt2(int position)
+        {
+            if (position < 0 || position + 1 >= length)
+                throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
+            else
+                return (short)(container.Data[start + position] + (container.Data[start + position] << 8));
+        }
+
+        public virtual void WriteInt2(int position, short value)
+        {
+            if (position < 0 || position + 1 >= length)
+                throw new InvalidOperationException("Tentative d'écriture au delà de la mémoire allouée");
+            else
+            {
+                container.Data[start + position] = (byte)(value);
+                container.Data[start + position + 1] = (byte)(value >> 8);
+            }
+        }
+
+        public virtual int ReadInt3(int position)
+        {
+            if (position < 0 || position + 2 >= length)
+                throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
+            else
+                return (container.Data[start + position] + (container.Data[start + position] << 8) + (container.Data[start + position] << 16));
+        }
+
+        public virtual void WriteInt3(int position, short value)
+        {
+            if (position < 0 || position + 2 >= length)
+                throw new InvalidOperationException("Tentative d'écriture au delà de la mémoire allouée");
+            else
+            {
+                container.Data[start + position] = (byte)(value);
+                container.Data[start + position + 1] = (byte)(value >> 8);
+                container.Data[start + position + 2] = (byte)(value >> 16);
+            }
         }
 
         public virtual int Read(int position, [In,Out] byte[] data, int offset, int count)

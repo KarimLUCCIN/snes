@@ -102,7 +102,7 @@ namespace SnesEmulator.Hardware.Instructions
             }
             
             /* on écrit le code */
-            bin.WriteByte(offset, match_instruction.AssociatedHexCode);
+            bin.WriteInt1(offset, match_instruction.AssociatedHexCode);
             offset++;
 
             /* s'il y a des arguments, on les écrit */
@@ -128,18 +128,18 @@ namespace SnesEmulator.Hardware.Instructions
                 case ArgumentType.None:
                     break;
                 case ArgumentType.I1:
-                    bin.WriteByte(offset, (byte)param);
+                    bin.WriteInt1(offset, (byte)param);
                     offset++;
                     break;
                 case ArgumentType.I2:
-                    bin.WriteByte(offset, (byte)param);
-                    bin.WriteByte(offset + 1, (byte)(param >> 8));
+                    bin.WriteInt1(offset, (byte)param);
+                    bin.WriteInt1(offset + 1, (byte)(param >> 8));
                     offset += 2;
                     break;
                 case ArgumentType.I3:
-                    bin.WriteByte(offset, (byte)param);
-                    bin.WriteByte(offset + 1, (byte)(param >> 8));
-                    bin.WriteByte(offset + 2, (byte)(param >> 16));
+                    bin.WriteInt1(offset, (byte)param);
+                    bin.WriteInt1(offset + 1, (byte)(param >> 8));
+                    bin.WriteInt1(offset + 2, (byte)(param >> 16));
                     offset += 3;
                     break;
             }

@@ -112,7 +112,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             {
                 CPU.CarryFlag = Convert.ToBoolean((value >> 7) & 1);
                 value = (value << 1) & 0xFF;
-                CPU.RAM.WriteByte(address, Convert.ToByte(value));
+                CPU.RAM.WriteInt1(address, Convert.ToByte(value));
             }
             else
             {

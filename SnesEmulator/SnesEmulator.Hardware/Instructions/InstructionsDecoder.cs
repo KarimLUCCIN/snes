@@ -59,7 +59,7 @@ namespace SnesEmulator.Hardware.Instructions
 
             while (offset < length)
             {
-                var code = bin.ReadByte(originalOffset = offset);
+                var code = bin.ReadInt1(originalOffset = offset);
                 offset++;
 
                 var match = knownInstructions[code];
@@ -87,7 +87,7 @@ namespace SnesEmulator.Hardware.Instructions
         /// <param name="decodedInstruction"></param>
         public void DecodeOnce(MemoryBin bin, ref int offset, ref InstructionDecodeContext context, ref InstructionReference decodedInstruction)
         {
-            var code = bin.ReadByte(offset);
+            var code = bin.ReadInt1(offset);
             offset++;
 
             var match = knownInstructions[code];

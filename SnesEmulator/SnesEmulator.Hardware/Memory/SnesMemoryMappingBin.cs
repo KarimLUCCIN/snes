@@ -54,17 +54,17 @@ namespace SnesEmulator.Hardware.Memory
             }
         }
 
-        public override int ReadByte(int position)
+        public override int ReadInt1(int position)
         {
             MapAddr(ref position);
 
             if (position < 0 || position >= length)
-                return -1;
+                throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
             else
                 return container.Data[start + position];
         }
 
-        public override void WriteByte(int position, byte value)
+        public override void WriteInt1(int position, byte value)
         {
             MapAddr(ref position);
 
@@ -72,6 +72,53 @@ namespace SnesEmulator.Hardware.Memory
                 throw new InvalidOperationException("Tentative d'écriture au delà de la mémoire allouée");
             else
                 container.Data[start + position] = value;
+        }
+
+        public override short ReadInt2(int position)
+        {
+            MapAddr(ref position);
+
+            if (position < 0 || position + 1 >= length)
+                throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
+            else
+                return (short)(container.Data[start + position] + (container.Data[start + position] << 8));
+        }
+
+        public override void WriteInt2(int position, short value)
+        {
+            MapAddr(ref position);
+
+            if (position < 0 || position + 1 >= length)
+                throw new InvalidOperationException("Tentative d'écriture au delà de la mémoire allouée");
+            else
+            {
+                container.Data[start + position] = (byte)(value);
+                container.Data[start + position + 1] = (byte)(value >> 8);
+            }
+        }
+
+        public override int ReadInt3(int position)
+        {
+            MapAddr(ref position);
+
+            if (position < 0 || position + 2 >= length)
+                throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
+            else
+                return (container.Data[start + position] + (container.Data[start + position] << 8) + (container.Data[start + position] << 16));
+        }
+
+        public override void WriteInt3(int position, short value)
+        {
+            MapAddr(ref position);
+
+            if (position < 0 || position + 2 >= length)
+                throw new InvalidOperationException("Tentative d'écriture au delà de la mémoire allouée");
+            else
+            {
+                container.Data[start + position] = (byte)(value);
+                container.Data[start + position + 1] = (byte)(value >> 8);
+                container.Data[start + position + 2] = (byte)(value >> 16);
+            }
         }
 
         public override int Read(int position, [In, Out] byte[] data, int offset, int count)
