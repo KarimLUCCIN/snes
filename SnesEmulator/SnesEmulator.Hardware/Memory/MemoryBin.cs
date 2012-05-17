@@ -50,7 +50,7 @@ namespace SnesEmulator.Hardware.Memory
             this.length = length;
         }
 
-        public virtual int ReadInt1(int position)
+        public virtual byte ReadInt1(int position)
         {
             if (position < 0 || position >= length)
                 throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
@@ -71,7 +71,9 @@ namespace SnesEmulator.Hardware.Memory
             if (position < 0 || position + 1 >= length)
                 throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
             else
-                return (short)(container.Data[start + position] + (container.Data[start + position] << 8));
+                return (short)(
+                    container.Data[start + position] |
+                    (container.Data[start + position + 1] << 8));
         }
 
         public virtual void WriteInt2(int position, short value)
@@ -90,7 +92,10 @@ namespace SnesEmulator.Hardware.Memory
             if (position < 0 || position + 2 >= length)
                 throw new InvalidOperationException("Tentative de lecture au delà de la mémoire allouée");
             else
-                return (container.Data[start + position] + (container.Data[start + position] << 8) + (container.Data[start + position] << 16));
+                return (
+                    container.Data[start + position] |
+                    (container.Data[start + position + 1] << 8) |
+                    (container.Data[start + position + 2] << 16));
         }
 
         public virtual void WriteInt3(int position, short value)
