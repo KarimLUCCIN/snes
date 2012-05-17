@@ -102,7 +102,15 @@ namespace SnesEmulator.Hardware.Instructions
             get { return rethrowExecutionExceptions; }
             set { rethrowExecutionExceptions = value; }
         }
-        
+
+        private bool trace = false;
+
+        public bool Trace
+        {
+            get { return trace; }
+            set { trace = value; }
+        }
+                
         private void InterpretThreadFunction()
         {
             try
@@ -122,6 +130,11 @@ namespace SnesEmulator.Hardware.Instructions
                         cpu.UpdateCurrentContext(ref currentContext);
 
                         decoder.DecodeOnce(interpreterMemory, ref cpu.PC, ref currentContext, ref currentInstruction);
+
+                        if (trace)
+                        {
+                            Debug.WriteLine(currentInstruction.StringRepresentation());
+                        }
 
                         currentInstruction.instruction.Run(currentInstruction.param1, currentInstruction.param2);
                     }
