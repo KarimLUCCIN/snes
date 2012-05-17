@@ -41,7 +41,7 @@ namespace SnesEmulator
             using (var strm = new System.IO.FileStream(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SnesInitializationROM.smc",
                 System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
-                var snes = new SnesPlatform((int)strm.Length, 256);
+                var snes = new SnesPlatform();
 
                 var romBin = Loader.LoadInto(strm, 0, 0, snes.Memory, 0);
 
