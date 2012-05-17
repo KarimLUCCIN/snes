@@ -299,7 +299,7 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0xA3, GenericInst(Hardware.OpCodes.LDA, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
             RegisterKnownInstruction(0xA5, GenericInst(Hardware.OpCodes.LDA, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
             RegisterKnownInstruction(0xA7, GenericInst(Hardware.OpCodes.LDA, Hardware.AddressingModes.DirectIndirectLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0xA9, GenericInstCustom(OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { throw new NotImplementedException(); },
+            RegisterKnownInstruction(0xA9, GenericInstCustom(OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { CPU_LoadInto(ref CPU.ACC, p1); },
                 (GenericInstruction.DecodeArgumentsFunctionDelegate)delegate(GenericInstruction sender, Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref int p1, ref int p2)
                 {
                     p1 = sender.DecodeI1I2ArgumentForMFlag(bin, ref offset, ref context);
@@ -541,6 +541,13 @@ namespace SnesEmulator.Hardware
 
             // XCE
             RegisterKnownInstruction(0xfb, new InstructionXCE(cpu));
+        }
+
+        private void CPU_LoadInto(ref int target_register, int value)
+        {
+            target_register = value;
+            CPU.NegativeFlag = value < 0;
+            CPU.ZeroFlag = value == 0;
         }
     }
 }

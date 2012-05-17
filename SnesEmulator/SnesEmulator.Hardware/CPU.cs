@@ -67,7 +67,7 @@ namespace SnesEmulator.Hardware
         
         #region Registers
 
-        public int ACC { get; set; }
+        public int ACC = 0;
         public int B { get; set; } // Accumulateur B "caché" seulement en mode Emulation
         public int SP { get; set; } // Stack pointer
         public int X { get; set; }
@@ -87,8 +87,8 @@ namespace SnesEmulator.Hardware
 
         #region Flags
 
-        public bool NegativeFlag { get; private set; }
-        public bool ZeroFlag { get; private set; }
+        public bool NegativeFlag = false;
+        public bool ZeroFlag = true;
         public bool OverflowFlag { get; private set; }
         public bool CarryFlag { get; set; }
         public bool EFlag { get; set; }
@@ -147,6 +147,15 @@ namespace SnesEmulator.Hardware
             Platform = platform;
 
             this.RAM = RAM;
+            Reset();
+
+            DirectPage = new MemoryBin(RAM.Container, RAM.Start, 256); 
+
+            DecodeTable = new InstructionsDecodeTable(this);
+        }
+
+        public void Reset()
+        {
             ACC = X = Y = PBR = DBR = 0x00;
             EFlag = true; // Le processeur démarre en mode Emulation
             XFlag = MFlag = true; // ACC, X et Y sur 8 bits
@@ -154,9 +163,6 @@ namespace SnesEmulator.Hardware
             SP = 0x100; // Le stack pointer est à 0x100 en mode émulation
             //M = 1;
             PC = 0;
-            DirectPage = new MemoryBin(RAM.Container, RAM.Start, 256); 
-
-            DecodeTable = new InstructionsDecodeTable(this);
         }
 
         public void SwitchFromEmulationToNativeMode()

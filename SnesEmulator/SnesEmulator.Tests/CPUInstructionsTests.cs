@@ -23,6 +23,24 @@ namespace SnesEmulator.Tests
         }
 
         [TestMethod]
+        public void TestAllDecodedAndImplemented()
+        {
+            /* On vérifie juste que tout soit bien implémenté */
+
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            for(int i = 0;i<256;i++)
+            {
+                snes.CPU.Reset();
+                snes.CPU.DecodeTable.KnownInstructions[i].Run(0, 0);
+            }
+        }
+
+        [TestMethod]
         public void BasicTestInterpreter()
         {
             SnesPlatform snes;
