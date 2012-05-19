@@ -29,6 +29,19 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             }
         }
 
+        public override string StringRepresentation(int param1 = 0, int param2 = 0)
+        {
+            if (param1 != 0)
+            {
+                var callback = CPU.InstrumentationCallBacks[param1 - 1];
+
+                if (callback != null)
+                    return String.Format("CLR Callback : {0}@{1}", callback.Method.Name, callback.Method.DeclaringType.AssemblyQualifiedName);
+            }
+
+            return String.Format("Unbound CLR Callback");
+        }
+
         public override void DecodeArguments(Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref InstructionReference instructionReference)
         {
 #warning TODO Cheat sur WDM
