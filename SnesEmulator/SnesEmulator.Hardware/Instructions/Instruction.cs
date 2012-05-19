@@ -298,6 +298,15 @@ namespace SnesEmulator.Hardware.Instructions
                 return arg1 + CPU.D + X;
         }
 
+        protected int DirectIndexedY(int arg1)
+        {
+            int Y = CPU.XFlag ? CPU.Y & 0xFF : CPU.Y; // Si x = 1 (donc X sur 8bits) on garde que le low byte
+            if (CPU.EFlag)
+                return arg1 + Y;
+            else
+                return arg1 + CPU.D + Y;
+        }
+
         protected int DirectIndirectIndexedLong(int arg1)
         {
             // Cet adressage n'existe pas en mode émulation
@@ -392,6 +401,10 @@ namespace SnesEmulator.Hardware.Instructions
                 case AddressingModes.DirectIndexedX:
                     {
                         return DirectIndexedX(param);
+                    }
+                case AddressingModes.DirectIndexedY:
+                    {
+                        return DirectIndexedY(param);
                     }
                 case AddressingModes.DirectIndirectIndexedLong:
                     {
