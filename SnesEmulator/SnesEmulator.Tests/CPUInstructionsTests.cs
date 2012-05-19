@@ -151,6 +151,39 @@ namespace SnesEmulator.Tests
         }
 
         [TestMethod]
+        public void TestSTA()
+        {
+            /*  On test ça :
+                LDA #$03 
+                STA $7E0001
+                LDA #0
+                ADC $7E0001
+                ADC $7E0001
+                STP
+             * */
+
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 3);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STA, AddressingModes.AbsoluteLong, ArgumentType.I3, 1);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.AbsoluteLong, ArgumentType.I3, 1);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ADC, AddressingModes.AbsoluteLong, ArgumentType.I3, 1);
+
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(6, snes.CPU.ACC);
+            });
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
+            snes.Interpreter.Interpret(romBin, 0, false);
+        }
+
+        [TestMethod]
         public void TestStackLiteral()
         {
             /* Teste le stack, litéralement, sans instructions du CPU */
