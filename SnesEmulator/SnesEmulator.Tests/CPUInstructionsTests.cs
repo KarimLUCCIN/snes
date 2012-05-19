@@ -159,6 +159,12 @@ namespace SnesEmulator.Tests
                 LDA #0
                 ADC $7E0001
                 ADC $7E0001
+                [Check(A == 6)]
+                LDA $7E0001
+                [Check(A == 3)]
+                STZ $7E0001
+                LDA $7E0001
+                [Check(A == 0)]
                 STP
              * */
 
@@ -177,6 +183,19 @@ namespace SnesEmulator.Tests
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
             {
                 Assert.AreEqual(6, snes.CPU.ACC);
+            });
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.AbsoluteLong, ArgumentType.I3, 1);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(3, snes.CPU.ACC);
+            });
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STZ, AddressingModes.Absolute, ArgumentType.I2, 1);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.AbsoluteLong, ArgumentType.I3, 1);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(0, snes.CPU.ACC);
             });
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);

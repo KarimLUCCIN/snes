@@ -481,20 +481,32 @@ namespace SnesEmulator.Hardware
             }));
 
             // STX
-            RegisterKnownInstruction(0x86, GenericInst(Hardware.OpCodes.STX, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x8E, GenericInst(Hardware.OpCodes.STX, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0x96, GenericInst(Hardware.OpCodes.STX, Hardware.AddressingModes.DirectIndexedY, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
+            Action<Instruction, int, int> operation_STX = (Instruction sender, int p1, int p2) =>
+            {
+                sender.WriteAddressedValue(sender.ResolveAddress(p1), cpu.X);
+            };
+            RegisterKnownInstruction(0x86, GenericInst(Hardware.OpCodes.STX, Hardware.AddressingModes.Direct, operation_STX, ArgumentType.I1));
+            RegisterKnownInstruction(0x8E, GenericInst(Hardware.OpCodes.STX, Hardware.AddressingModes.Absolute, operation_STX, ArgumentType.I2));
+            RegisterKnownInstruction(0x96, GenericInst(Hardware.OpCodes.STX, Hardware.AddressingModes.DirectIndexedY, operation_STX, ArgumentType.I1));
 
             // STY
-            RegisterKnownInstruction(0x84, GenericInst(Hardware.OpCodes.STY, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x8C, GenericInst(Hardware.OpCodes.STY, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0x94, GenericInst(Hardware.OpCodes.STY, Hardware.AddressingModes.DirectIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
+            Action<Instruction, int, int> operation_STY = (Instruction sender, int p1, int p2) =>
+            {
+                sender.WriteAddressedValue(sender.ResolveAddress(p1), cpu.Y);
+            };
+            RegisterKnownInstruction(0x84, GenericInst(Hardware.OpCodes.STY, Hardware.AddressingModes.Direct, operation_STY, ArgumentType.I1));
+            RegisterKnownInstruction(0x8C, GenericInst(Hardware.OpCodes.STY, Hardware.AddressingModes.Absolute, operation_STY, ArgumentType.I2));
+            RegisterKnownInstruction(0x94, GenericInst(Hardware.OpCodes.STY, Hardware.AddressingModes.DirectIndexedX, operation_STY, ArgumentType.I1));
 
             // STZ
-            RegisterKnownInstruction(0x64, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x74, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.DirectIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x9C, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0x9E, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
+            Action<Instruction, int, int> operation_STZ = (Instruction sender, int p1, int p2) =>
+            {
+                sender.WriteAddressedValue(sender.ResolveAddress(p1), 0);
+            };
+            RegisterKnownInstruction(0x64, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.Direct, operation_STZ, ArgumentType.I1));
+            RegisterKnownInstruction(0x74, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.DirectIndexedX, operation_STZ, ArgumentType.I1));
+            RegisterKnownInstruction(0x9C, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.Absolute, operation_STZ, ArgumentType.I2));
+            RegisterKnownInstruction(0x9E, GenericInst(Hardware.OpCodes.STZ, Hardware.AddressingModes.AbsoluteIndexedX, operation_STZ, ArgumentType.I2));
 
             // TAX
             RegisterKnownInstruction(0xAA, GenericInst(Hardware.OpCodes.TAX, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));

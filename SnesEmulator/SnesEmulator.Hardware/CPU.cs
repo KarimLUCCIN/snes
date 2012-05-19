@@ -70,8 +70,8 @@ namespace SnesEmulator.Hardware
         public int ACC = 0;
         public int B { get; set; } // Accumulateur B "caché" seulement en mode Emulation
         public int SP = 0; // Stack pointer
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int X = 0;
+        public int Y = 0;
         //public int M { get; set; } Etre ou ne pas être ? Telle est la question
         public int D { get; set; } // Direct Page register
         public int DBR { get; set; }
