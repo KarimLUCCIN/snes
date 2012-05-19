@@ -53,6 +53,8 @@ namespace SnesEmulator.Tests
 
             string notImplemented = String.Empty;
 
+            int validCount = 0;
+
             for (int i = 0; i < 256; i++)
             {
                 Assert.AreNotEqual(null, snes.CPU.DecodeTable.KnownInstructions[i]);
@@ -61,6 +63,8 @@ namespace SnesEmulator.Tests
                 {
                     snes.CPU.Reset();
                     snes.CPU.DecodeTable.KnownInstructions[i].Run(0, 0);
+
+                    validCount++;
                 }
                 catch (NotImplementedException)
                 {
@@ -68,7 +72,7 @@ namespace SnesEmulator.Tests
                 }
             }
 
-            Assert.AreEqual(String.Empty, notImplemented);
+            Assert.AreEqual(String.Empty, notImplemented, String.Format("{0}/{1} Implemented ({2} %)", validCount, 256, (int)(100 * (validCount / 256.0))));
         }
 
         [TestMethod]
