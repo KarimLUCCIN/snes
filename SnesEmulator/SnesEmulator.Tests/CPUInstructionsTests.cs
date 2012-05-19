@@ -24,7 +24,7 @@ namespace SnesEmulator.Tests
         }
 
         [TestMethod]
-        public void TestAllDecodedAndImplemented()
+        public void TestAllDecoded()
         {
             /* On vérifie juste que tout soit bien implémenté */
 
@@ -36,9 +36,39 @@ namespace SnesEmulator.Tests
 
             for(int i = 0;i<256;i++)
             {
-                snes.CPU.Reset();
-                snes.CPU.DecodeTable.KnownInstructions[i].Run(0, 0);
+                Assert.AreNotEqual(null, snes.CPU.DecodeTable.KnownInstructions[i]);
             }
+        }
+
+        [TestMethod]
+        public void TestAllImplemented()
+        {
+            /* On vérifie juste que tout soit bien implémenté */
+
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            string notImplemented = String.Empty;
+
+            for (int i = 0; i < 256; i++)
+            {
+                Assert.AreNotEqual(null, snes.CPU.DecodeTable.KnownInstructions[i]);
+
+                try
+                {
+                    snes.CPU.Reset();
+                    snes.CPU.DecodeTable.KnownInstructions[i].Run(0, 0);
+                }
+                catch (NotImplementedException)
+                {
+                    notImplemented += String.Format("{0} : {1} ({2})\r\n",snes.CPU.DecodeTable.KnownInstructions[i].AssociatedHexCode.ToString("X2"), snes.CPU.DecodeTable.KnownInstructions[i].Code, snes.CPU.DecodeTable.KnownInstructions[i].AddrMode);
+                }
+            }
+
+            Assert.AreEqual(String.Empty, notImplemented);
         }
 
         [TestMethod]
