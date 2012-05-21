@@ -68,7 +68,14 @@ namespace SnesEmulator.Hardware
         #region Registers
 
         public int ACC = 0;
-        public int B { get; set; } // Accumulateur B "caché" seulement en mode Emulation
+
+        // Accumulateur B "caché" seulement en mode Emulation
+        public int B
+        {
+            get { return X; }
+            set { X = value; }
+        }
+
         public int SP = 0; // Stack pointer
         public int X = 0;
         public int Y = 0;
@@ -87,19 +94,157 @@ namespace SnesEmulator.Hardware
 
         #region Flags
 
-        public bool NegativeFlag = false;
-        public bool ZeroFlag = true;
-        public bool OverflowFlag { get; private set; }
-        public bool CarryFlag { get; set; }
+        /* 
+         * Les instructions PHP et PLP push et pull un int qui reprend toutes les valeurs
+         * de status du processeur. Du coup, j'en fait un int directement.
+         * 
+         * 
+            Flags stored in P Register
+
+            Mnemonic	Value	Binary Value	Description
+            N	#$80	10000000	Negative
+            V	#$40	01000000	Overflow
+            Z	#$02	00000010	Zero
+            C	#$01	00000001	Carry
+            D	#$08	00001000	Decimal
+            I	#$04	00000100	IRQ disable
+            X	#$10	00010000	Index register size (native mode only)
+            (0 = 16-bit, 1 = 8-bit)
+            M	#$20	00100000	Accumulator register size (native mode only)
+            (0 = 16-bit, 1 = 8-bit)
+            E			6502 emulation mode
+            B	#$10	00010000	Break (emulation mode only)
+
+         */
+
+        /// <summary>
+        /// Tous les flags
+        /// </summary>
+        public byte P = 0;
+
+        private const int flag_n_offset = (1 << 7);
+        private const int flag_v_offset = (1 << 6);
+        private const int flag_z_offset = (1 << 1);
+        private const int flag_c_offset = (1 << 0);
+        private const int flag_d_offset = (1 << 3);
+        private const int flag_i_offset = (1 << 2);
+        private const int flag_x_offset = (1 << 4);
+        private const int flag_m_offset = (1 << 5);
+
+        /*
+        * Quand on est en émulation, c'est B, sinon c'est X donc ça tient 
+        * la route de le déclarer comme ça
+         * */
+        private const int flag_b_offset = flag_x_offset;
+
+        public bool NegativeFlag
+        {
+            get { return (P & flag_n_offset) == flag_n_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_n_offset);
+                else
+                    P = (byte)(P & ~flag_n_offset);
+            }
+        }
+
+        public bool OverflowFlag
+        {
+            get { return (P & flag_v_offset) == flag_v_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_v_offset);
+                else
+                    P = (byte)(P & ~flag_v_offset);
+            }
+        }
+
+        public bool ZeroFlag
+        {
+            get { return (P & flag_z_offset) == flag_z_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_z_offset);
+                else
+                    P = (byte)(P & ~flag_z_offset);
+            }
+        }
+
+        public bool CarryFlag
+        {
+            get { return (P & flag_c_offset) == flag_c_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_c_offset);
+                else
+                    P = (byte)(P & ~flag_c_offset);
+            }
+        }
+
+        // Pas dans les flags
         public bool EFlag { get; set; }
-        public bool DecimalFlag { get; set; }
-        public bool IRQDisabledFlag { get; set; }
 
-        public bool BreakFlag { get; set; } // Emulation mode
+        public bool DecimalFlag
+        {
+            get { return (P & flag_d_offset) == flag_d_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_d_offset);
+                else
+                    P = (byte)(P & ~flag_d_offset);
+            }
+        }
 
-        public bool MFlag { get; private set; } // Native mode
-        public bool XFlag { get; private set; } // Native mode
+        public bool IRQDisabledFlag
+        {
+            get { return (P & flag_i_offset) == flag_i_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_i_offset);
+                else
+                    P = (byte)(P & ~flag_i_offset);
+            }
+        }
 
+        // Emulation mode
+        public bool BreakFlag
+        {
+            get { return XFlag; }
+            set { XFlag = value; }
+        }
+
+        // Native mode
+        public bool MFlag
+        {
+            get { return (P & flag_m_offset) == flag_m_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_m_offset);
+                else
+                    P = (byte)(P & ~flag_m_offset);
+            }
+        }
+        
+        // Native mode
+        public bool XFlag
+        {
+            get { return (P & flag_x_offset) == flag_x_offset; }
+            set
+            {
+                if (value)
+                    P = (byte)(P | flag_x_offset);
+                else
+                    P = (byte)(P & ~flag_x_offset);
+            }
+        }
+        
         public void SetNegativeFlag(int value)
         {
             if (MFlag)
