@@ -378,24 +378,24 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x1F, GenericInst(Hardware.OpCodes.ORA, Hardware.AddressingModes.AbsoluteIndexedLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I3));
 
             // PUSH
-            RegisterKnownInstruction(0xF4, GenericInst(Hardware.OpCodes.PEA, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0xD4, GenericInst(Hardware.OpCodes.PEI, Hardware.AddressingModes.DirectIndirect, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
+            RegisterKnownInstruction(0xF4, GenericInst(Hardware.OpCodes.PEA, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { cpu.StackPush(p1, ArgumentType.I2); }, ArgumentType.I2));
+            RegisterKnownInstruction(0xD4, GenericInst(Hardware.OpCodes.PEI, Hardware.AddressingModes.DirectIndirect, (sender, p1, p2) => { cpu.StackPush(sender.ResolveArgument(p1), cpu.CurrentRegisterSize); }, ArgumentType.I1));
             RegisterKnownInstruction(0x62, GenericInst(Hardware.OpCodes.PER, Hardware.AddressingModes.RelativeLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0x48, GenericInst(Hardware.OpCodes.PHA, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x8B, GenericInst(Hardware.OpCodes.PHB, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x0B, GenericInst(Hardware.OpCodes.PHD, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x4B, GenericInst(Hardware.OpCodes.PHK, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x08, GenericInst(Hardware.OpCodes.PHP, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0xDA, GenericInst(Hardware.OpCodes.PHX, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x5A, GenericInst(Hardware.OpCodes.PHY, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
+            RegisterKnownInstruction(0x48, GenericInst(Hardware.OpCodes.PHA, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.ACC, cpu.CurrentRegisterSize); }));
+            RegisterKnownInstruction(0x8B, GenericInst(Hardware.OpCodes.PHB, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.DBR, ArgumentType.I1); }));
+            RegisterKnownInstruction(0x0B, GenericInst(Hardware.OpCodes.PHD, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.D, ArgumentType.I2); }));
+            RegisterKnownInstruction(0x4B, GenericInst(Hardware.OpCodes.PHK, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.PBR, ArgumentType.I1); }));
+            RegisterKnownInstruction(0x08, GenericInst(Hardware.OpCodes.PHP, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.P, ArgumentType.I1); }));
+            RegisterKnownInstruction(0xDA, GenericInst(Hardware.OpCodes.PHX, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.X, cpu.CurrentRegisterSize); }));
+            RegisterKnownInstruction(0x5A, GenericInst(Hardware.OpCodes.PHY, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.Y, cpu.CurrentRegisterSize); }));
 
             // PULL
-            RegisterKnownInstruction(0x68, GenericInst(Hardware.OpCodes.PLA, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0xAB, GenericInst(Hardware.OpCodes.PLB, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x2B, GenericInst(Hardware.OpCodes.PLD, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x28, GenericInst(Hardware.OpCodes.PLP, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0xFA, GenericInst(Hardware.OpCodes.PLX, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x7A, GenericInst(Hardware.OpCodes.PLY, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }));
+            RegisterKnownInstruction(0x68, GenericInst(Hardware.OpCodes.PLA, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { CPU_LoadInto(ref cpu.ACC, cpu.StackPull(cpu.CurrentRegisterSize)); }));
+            RegisterKnownInstruction(0xAB, GenericInst(Hardware.OpCodes.PLB, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.DBR = (byte)cpu.StackPull(ArgumentType.I1); }));
+            RegisterKnownInstruction(0x2B, GenericInst(Hardware.OpCodes.PLD, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.D = (short)cpu.StackPull(ArgumentType.I2); }));
+            RegisterKnownInstruction(0x28, GenericInst(Hardware.OpCodes.PLP, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.P = (byte)cpu.StackPull(ArgumentType.I1); }));
+            RegisterKnownInstruction(0xFA, GenericInst(Hardware.OpCodes.PLX, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { CPU_LoadInto(ref cpu.X, cpu.StackPull(cpu.CurrentRegisterSize)); }));
+            RegisterKnownInstruction(0x7A, GenericInst(Hardware.OpCodes.PLY, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { CPU_LoadInto(ref cpu.Y, cpu.StackPull(cpu.CurrentRegisterSize)); }));
 
             // REP
             RegisterKnownInstruction(0xC2, GenericInst(Hardware.OpCodes.REP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));

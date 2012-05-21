@@ -103,6 +103,14 @@ namespace SnesEmulator.Hardware.Instructions
             set { rethrowExecutionExceptions = value; }
         }
 
+        private bool startedInSeparateThread = false;
+
+        public bool StartedInSeparateThread
+        {
+            get { return startedInSeparateThread; }
+            private set { startedInSeparateThread = value; }
+        }
+        
         private bool trace = false;
 
         public bool Trace
@@ -113,45 +121,58 @@ namespace SnesEmulator.Hardware.Instructions
                 
         private void InterpretThreadFunction()
         {
-            try
+            if (!startedInSeparateThread && rethrowExecutionExceptions)
+            {
+                /* No error wrapping */
+                WrappedInterpretThreadFunction();
+            }
+            else
             {
                 try
                 {
-                    var currentInstruction = new InstructionReference();
-                    var currentContext = platform.CPU.BuildCurrentContext();
-
-                    var cpu = platform.CPU;
-                    var decoder = platform.Decoder;
-
-                    while (!stop)
-                    {
-                        // On pourrait peut être le mettre en cache et je màj uniquement
-                        // après une instruction qui le modifie
-                        cpu.UpdateCurrentContext(ref currentContext);
-
-                        decoder.DecodeOnce(interpreterMemory, ref cpu.PC, ref currentContext, ref currentInstruction);
-
-                        if (trace)
-                        {
-                            Debug.WriteLine(currentInstruction.StringRepresentation());
-                        }
-
-                        currentInstruction.instruction.Run(currentInstruction.param1, currentInstruction.param2);
-                    }
+                    WrappedInterpretThreadFunction();
                 }
-                finally
+                catch (Exception ex)
                 {
-                    interpreting = false;
+                    if (rethrowExecutionExceptions)
+                        throw;
+
+                    lastInterpretException = ex;
+                    Debug.WriteLine("Interpret Failure");
+                    Debug.WriteLine(ex);
                 }
             }
-            catch (Exception ex)
-            {
-                if (rethrowExecutionExceptions)
-                    throw;
+        }
 
-                lastInterpretException = ex;
-                Debug.WriteLine("Interpret Failure");
-                Debug.WriteLine(ex);
+        private void WrappedInterpretThreadFunction()
+        {
+            try
+            {
+                var currentInstruction = new InstructionReference();
+                var currentContext = platform.CPU.BuildCurrentContext();
+
+                var cpu = platform.CPU;
+                var decoder = platform.Decoder;
+
+                while (!stop)
+                {
+                    // On pourrait peut être le mettre en cache et je màj uniquement
+                    // après une instruction qui le modifie
+                    cpu.UpdateCurrentContext(ref currentContext);
+
+                    decoder.DecodeOnce(interpreterMemory, ref cpu.PC, ref currentContext, ref currentInstruction);
+
+                    if (trace)
+                    {
+                        Debug.WriteLine(currentInstruction.StringRepresentation());
+                    }
+
+                    currentInstruction.instruction.Run(currentInstruction.param1, currentInstruction.param2);
+                }
+            }
+            finally
+            {
+                interpreting = false;
             }
         }
 
@@ -180,6 +201,8 @@ namespace SnesEmulator.Hardware.Instructions
 
                 if (separateThread)
                 {
+                    startedInSeparateThread = true;
+
                     interpretThread = new Thread(new ThreadStart(InterpretThreadFunction));
                     interpretThread.Name = String.Format("SNES Interpreter - {0}", DateTime.Now.ToLongTimeString());
 
@@ -190,6 +213,8 @@ namespace SnesEmulator.Hardware.Instructions
                 }
                 else
                 {
+                    startedInSeparateThread = false;
+
                     InterpretThreadFunction();
                 }
             }

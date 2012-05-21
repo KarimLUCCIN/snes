@@ -62,6 +62,8 @@ namespace SnesEmulator.Tests
                 try
                 {
                     snes.CPU.Reset();
+                    snes.CPU.StackPush(0, ArgumentType.I2);
+
                     snes.CPU.DecodeTable.KnownInstructions[i].Run(0, 0);
 
                     validCount++;
@@ -208,6 +210,64 @@ namespace SnesEmulator.Tests
 
         [TestMethod]
         public void TestStackLiteral()
+        {
+            /*
+             * On test
+             * 
+             * PUSH 10,20,30,0xFF7,40
+             * LDA $1337
+             * PHA
+             * 
+             * PLA
+             * [Check(ACC == 1337)]
+             * foreach(nb in 10,20,30,0xFF7,40)
+             * {
+             *   PLX
+             *   [Check(X == nb)]
+             * }
+             * */
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            snes.CPU.SwitchFromEmulationToNativeMode();
+            snes.CPU.MFlag = false;
+
+            var testValues = new[] { 10, 20, 30, 0xFF7, 40 };
+
+            foreach (var c_nb in testValues)
+            {
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PEA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I2, c_nb);
+            }
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I2, 0x1337);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PHA, AddressingModes.StackRelative);
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLA);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(0x1337, snes.CPU.ACC);
+            });
+
+            for (int i = testValues.Length - 1; i >= 0; i--)
+            {
+                var current_param = testValues[i];
+
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLX);
+                snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+                {
+                    Assert.AreEqual(current_param, snes.CPU.X);
+                });
+            }
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP, AddressingModes.Implied);
+            snes.Interpreter.Interpret(romBin, 0, false);
+        }
+
+        [TestMethod]
+        public void TestStackBasicOnCPU()
         {
             /* Teste le stack, litéralement, sans instructions du CPU */
             SnesPlatform snes;

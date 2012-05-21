@@ -80,9 +80,21 @@ namespace SnesEmulator.Hardware
         public int X = 0;
         public int Y = 0;
         //public int M { get; set; } Etre ou ne pas être ? Telle est la question
-        public int D { get; set; } // Direct Page register
-        public int DBR { get; set; }
-        public int PBR { get; set; }
+        
+        /// <summary>
+        /// Direct Page Register
+        /// </summary>
+        public short D = 0;
+
+        /// <summary>
+        /// Data Bank Register
+        /// </summary>
+        public byte DBR = 0;
+
+        /// <summary>
+        /// Program Bank Register
+        /// </summary>
+        public byte PBR = 0;
 
         /// <summary>
         /// Je le met direct, sans propriété, afin de toujours pouvoir le passer en ref sans se prendre la tête
@@ -118,7 +130,7 @@ namespace SnesEmulator.Hardware
          */
 
         /// <summary>
-        /// Tous les flags
+        /// Processor's Flags
         /// </summary>
         public byte P = 0;
 
@@ -217,6 +229,15 @@ namespace SnesEmulator.Hardware
         {
             get { return XFlag; }
             set { XFlag = value; }
+        }
+
+        /// <summary>
+        /// Renvoi la taille des registres, soit I1 soit I2, en fonction du mode
+        /// actuel du processeur
+        /// </summary>
+        public ArgumentType CurrentRegisterSize
+        {
+            get { return MFlag ? ArgumentType.I1 : ArgumentType.I2; }
         }
 
         // Native mode
