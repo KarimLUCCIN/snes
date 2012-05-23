@@ -578,7 +578,28 @@ namespace SnesEmulator.Hardware
             }));
 
             // XCE
-            RegisterKnownInstruction(0xfb, new InstructionXCE(cpu));
+            RegisterKnownInstruction(0xfb, GenericInst(Hardware.OpCodes.XCE, AddressingModes.Implied, (sender, p1, p2) =>
+            {
+                var carry = cpu.CarryFlag;
+                if (carry)
+                {
+                    /* on s'attend donc à ce que le cpu passe en emul */
+                    if (!cpu.EFlag)
+                    {
+                        cpu.SwitchFromNativeToEmulationMode();
+                        cpu.CarryFlag = false;
+                    }
+                }
+                else
+                {
+                    /* on passe en natif */
+                    if (cpu.EFlag)
+                    {
+                        cpu.SwitchFromEmulationToNativeMode();
+                        cpu.CarryFlag = true;
+                    }
+                }
+            }));
         }
 
         private void CPU_LoadInto(ref int target_register, int value)

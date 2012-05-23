@@ -282,7 +282,100 @@ namespace SnesEmulator.Tests
         }
 
         [TestMethod]
-        public void TestStacLiteral()
+        public void TestStackBasicOnCPUWithCPUModeSwitch()
+        {
+            /*
+             * On test
+             * 
+             * // emul to native
+             * clc
+             * xce
+             * 
+             * PUSH 10,20,30,0xFF7,40
+             * LDA $13
+             * PHA
+             * 
+             * // native to emul
+             * sec
+             * xce
+             * 
+             * PLA
+             * [Check(ACC == 13)]
+             * foreach(nb in 10,20,30,0xFF7,40)
+             * {
+             *   PLX
+             *   [Check(X == nb)]
+             * }
+             * 
+             * PER 0x10 [lb]
+             * PLA
+             * 
+             * [Check(ACC == lb + 10)]
+             * 
+             * 
+             * 
+             * Note : certaines instructions sont doublées car en natif le stack fait 2 bytes alors qu'en emulation il n'en fait qu'1.
+             * Il faut donc lire le byte 0 qui se trouve devant (si j'ai bien compris la logique ...)
+             * */
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.CLC);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.XCE);
+
+            var testValues = new[] { 10, 20, 30, 0xF7, 40 };
+
+            foreach (var c_nb in testValues)
+            {
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PEA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I2, c_nb);
+            }
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0x13);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PHA, AddressingModes.StackRelative);
+            
+
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.SEC);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.XCE);
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLA);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(0x13, snes.CPU.ACC);
+            });
+
+            for (int i = testValues.Length - 1; i >= 0; i--)
+            {
+                var current_param = testValues[i];
+
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLX);
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLX);
+                snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+                {
+                    Assert.AreEqual(current_param, snes.CPU.X);
+                });
+            }
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PER, AddressingModes.RelativeLong, ArgumentType.I2, 0x10);
+            var lb = writeOffset;
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLA);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLA);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(lb + 0x10, snes.CPU.ACC);
+            });
+
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP, AddressingModes.Implied);
+            snes.Interpreter.Interpret(romBin, 0, false);
+        }
+
+        [TestMethod]
+        public void TestStackLiteral()
         {
             /* Teste le stack, litéralement, sans instructions du CPU */
             SnesPlatform snes;
