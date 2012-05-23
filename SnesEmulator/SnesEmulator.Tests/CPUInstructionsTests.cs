@@ -209,7 +209,7 @@ namespace SnesEmulator.Tests
         }
 
         [TestMethod]
-        public void TestStackLiteral()
+        public void TestStackBasicOnCPU()
         {
             /*
              * On test
@@ -225,6 +225,11 @@ namespace SnesEmulator.Tests
              *   PLX
              *   [Check(X == nb)]
              * }
+             * 
+             * PER 0x10 [lb]
+             * PLA
+             * 
+             * [Check(ACC == lb + 10)]
              * */
             SnesPlatform snes;
             MemoryBin romBin;
@@ -262,12 +267,22 @@ namespace SnesEmulator.Tests
                 });
             }
 
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PER, AddressingModes.RelativeLong, ArgumentType.I2, 0x10);
+            var lb = writeOffset;
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLA);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(lb + 0x10, snes.CPU.ACC);
+            });
+            
+
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP, AddressingModes.Implied);
             snes.Interpreter.Interpret(romBin, 0, false);
         }
 
         [TestMethod]
-        public void TestStackBasicOnCPU()
+        public void TestStacLiteral()
         {
             /* Teste le stack, litéralement, sans instructions du CPU */
             SnesPlatform snes;

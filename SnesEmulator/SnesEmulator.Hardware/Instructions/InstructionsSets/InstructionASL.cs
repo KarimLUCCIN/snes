@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace SnesEmulator.Hardware.Instructions.InstructionsSets
 {
-    class InstructionASL : Instruction
+    public class InstructionASL : Instruction
     {
         public InstructionASL(CPU cpu, AddressingModes addressingMode)
             : base(cpu, OpCodes.ASL, addressingMode)

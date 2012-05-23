@@ -391,7 +391,7 @@ namespace SnesEmulator.Hardware
             // PUSH
             RegisterKnownInstruction(0xF4, GenericInst(Hardware.OpCodes.PEA, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { cpu.StackPush(p1, ArgumentType.I2); }, ArgumentType.I2));
             RegisterKnownInstruction(0xD4, GenericInst(Hardware.OpCodes.PEI, Hardware.AddressingModes.DirectIndirect, (sender, p1, p2) => { cpu.StackPush(sender.ResolveArgument(p1), cpu.CurrentRegisterSize); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x62, GenericInst(Hardware.OpCodes.PER, Hardware.AddressingModes.RelativeLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
+            RegisterKnownInstruction(0x62, GenericInst(Hardware.OpCodes.PER, Hardware.AddressingModes.RelativeLong, (sender, p1, p2) => { cpu.StackPush(p1 + cpu.PC, ArgumentType.I2); }, ArgumentType.I2));
             RegisterKnownInstruction(0x48, GenericInst(Hardware.OpCodes.PHA, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.ACC, cpu.CurrentRegisterSize); }));
             RegisterKnownInstruction(0x8B, GenericInst(Hardware.OpCodes.PHB, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.DBR, ArgumentType.I1); }));
             RegisterKnownInstruction(0x0B, GenericInst(Hardware.OpCodes.PHD, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { cpu.StackPush(cpu.D, ArgumentType.I2); }));
