@@ -8,7 +8,7 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
     class InstructionAND : Instruction
     {
         public InstructionAND(CPU cpu, AddressingModes addressingMode)
-            : base(cpu, OpCodes.ADC, addressingMode)
+            : base(cpu, OpCodes.AND, addressingMode)
         {
 
         }

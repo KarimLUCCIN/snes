@@ -336,5 +336,33 @@ namespace SnesEmulator.Tests
             Assert.AreEqual(10, cpu.StackPeek(ArgumentType.I1));
             Assert.AreEqual(10, cpu.StackPull(ArgumentType.I1));
         }
+
+        [TestMethod]
+        public void TestCMP()
+        {
+            /*  On test ça :
+                
+                LDA #$10	;A = 0x10
+                CLC		;prepare for compare
+                CMP #$10    ; ZeroFlag = 1
+             * */
+
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0x10);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.CLC);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.CMP, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0x10);
+
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, (i) =>
+            {
+                Assert.AreEqual(true, snes.CPU.ZeroFlag);
+            });
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
+            snes.Interpreter.Interpret(romBin, 0, false);
+        }
     }
 }

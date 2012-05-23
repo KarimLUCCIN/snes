@@ -282,17 +282,17 @@ namespace SnesEmulator.Hardware
         public void SetOverflowFlag(int value)
         {
             if (MFlag)
-                OverflowFlag = value > Mode8Bits.Max ? true : false;
+                OverflowFlag = value > Mode8Bits.SignedMax || value < Mode8Bits.SignedMin ? true : false;
             else
-                OverflowFlag = value > Mode16Bits.Max ? true : false;
+                OverflowFlag = value > Mode16Bits.SignedMax || value < Mode16Bits.SignedMin ? true : false;
         }
 
         public void SetCarryFlag(int value)
         {
             if (MFlag)
-                CarryFlag = value > Mode8Bits.Max ? true : false;
+                CarryFlag = value > Mode8Bits.UnsignedMax || value < 0 ? true : false;
             else
-                CarryFlag = value > Mode16Bits.Max ? true : false;
+                CarryFlag = value > Mode16Bits.UnsignedMax || value < 0 ? true : false;
         }
 
         #endregion

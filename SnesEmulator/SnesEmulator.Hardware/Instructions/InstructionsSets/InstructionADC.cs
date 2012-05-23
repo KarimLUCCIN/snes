@@ -113,13 +113,13 @@ namespace SnesEmulator.Hardware.Instructions.InstructionsSets
             CPU.SetOverflowFlag(CPU.ACC);
             if (CPU.MFlag)
             {
-                if (CPU.ACC > Mode8Bits.Max)
-                    CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
+                if (CPU.ACC > Mode8Bits.UnsignedMax)
+                    CPU.ACC = CPU.ACC - (Mode16Bits.UnsignedMax + 1);
             }
             else
             {
-                if (CPU.ACC > Mode16Bits.Max)
-                    CPU.ACC = CPU.ACC - (Mode16Bits.Max + 1);
+                if (CPU.ACC > Mode16Bits.UnsignedMax)
+                    CPU.ACC = CPU.ACC - (Mode16Bits.UnsignedMax + 1);
             }
             CPU.SetZeroFlag(CPU.ACC);
             CPU.SetNegativeFlag(CPU.ACC);
