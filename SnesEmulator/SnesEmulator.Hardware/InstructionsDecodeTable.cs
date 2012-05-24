@@ -155,12 +155,32 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0xB0, GenericInst(Hardware.OpCodes.BCS, Hardware.AddressingModes.Relative, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
             RegisterKnownInstruction(0xF0, GenericInst(Hardware.OpCodes.BEQ, Hardware.AddressingModes.Relative, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
 
-            // TESTS
-            RegisterKnownInstruction(0x24, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x2C, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x34, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.DirectIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x3C, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x89, GenericInstCustom(OpCodes.BIT, AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { throw new NotImplementedException(); },
+            // BIT
+            Action<Instruction, int, int> operation_BIT_NonImmediate = (Instruction sender, int p1, int p2) =>
+            {
+                p1 = sender.ResolveArgument(p1);
+
+                switch (cpu.CurrentRegisterSize)
+                {
+                    case ArgumentType.I1:
+                        cpu.NegativeFlag = ((p1 & (1 << 7)) >> 7) != 0;
+                        cpu.OverflowFlag = ((p1 & (1 << 6)) >> 6) != 0;
+                        break;
+                    case ArgumentType.I2:
+                        cpu.NegativeFlag = ((p1 & (1 << 15)) >> 15) != 0;
+                        cpu.OverflowFlag = ((p1 & (1 << 14)) >> 14) != 0;
+                        break;
+                    default:
+                        throw new NotSupportedException(cpu.CurrentRegisterSize.ToString());
+                }
+
+                cpu.ZeroFlag = (cpu.ACC & p1) == 0;
+            };
+            RegisterKnownInstruction(0x24, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.Direct, operation_BIT_NonImmediate, ArgumentType.I1));
+            RegisterKnownInstruction(0x2C, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.Absolute, operation_BIT_NonImmediate, ArgumentType.I2));
+            RegisterKnownInstruction(0x34, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.DirectIndexedX, operation_BIT_NonImmediate, ArgumentType.I1));
+            RegisterKnownInstruction(0x3C, GenericInst(Hardware.OpCodes.BIT, Hardware.AddressingModes.AbsoluteIndexedX, operation_BIT_NonImmediate, ArgumentType.I2));
+            RegisterKnownInstruction(0x89, GenericInstCustom(OpCodes.BIT, AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { cpu.ZeroFlag = (cpu.ACC & p1) == 0; },
                 (GenericInstruction.DecodeArgumentsFunctionDelegate)delegate(GenericInstruction sender, Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref int p1, ref int p2)
                 {
                     p1 = sender.DecodeI1I2ArgumentForMFlag(bin, ref offset, ref context);

@@ -18,6 +18,14 @@ namespace SnesEmulator.Hardware.Instructions
         {
             get { return cpu; }
         }
+
+        private bool enableInstructionValidation = false;
+
+        public bool EnableInstructionValidation
+        {
+            get { return enableInstructionValidation; }
+            set { enableInstructionValidation = value; }
+        }
         
         public InstructionsEncoder(CPU cpu)
         {
@@ -77,6 +85,8 @@ namespace SnesEmulator.Hardware.Instructions
         /// <param name="param2"></param>
         public void Write(MemoryBin bin, ref int offset, OpCodes opCode, AddressingModes addrMode = AddressingModes.Direct, ArgumentType param1Type = ArgumentType.I1, int param1 = 0, int param2 = 0)
         {
+            var originalOffset = offset;
+
             /* d'abord, on cherche l'instruction */
             Instruction match_instruction = null;
 
@@ -118,6 +128,34 @@ namespace SnesEmulator.Hardware.Instructions
                     WriteParameter(bin, ref offset, param1Type, param2);
                 }
             }
+
+            if (enableInstructionValidation)
+            {
+                /* on vérifie l'instruction écrite */
+                var instructionDecode = new InstructionReference();
+                var context = cpu.BuildCurrentContext();
+
+                cpu.Platform.Decoder.DecodeOnce(bin, ref originalOffset, ref context, ref instructionDecode);
+
+
+                if (instructionDecode.instruction.Code != opCode ||
+                    instructionDecode.param1 != param1 ||
+                    instructionDecode.param2 != param2)
+                {
+                    throw new InvalidProgramException(String.Format("Instruction decode mismatch.\r\nEncoded:{0}({1},{2}) [{3}]\r\nDecoded:{4}({5},{6}) [{7}]",
+                        opCode,
+                        param1, param2,
+                        addrMode,
+
+                        instructionDecode.instruction.Code,
+                        instructionDecode.param1, instructionDecode.param2,
+                        instructionDecode.instruction.AddrMode));
+                }
+                else if (originalOffset != offset)
+                {
+                    throw new InvalidProgramException(String.Format("Instruction decode mismatch, Invalid offset. Difference : {0}", offset - originalOffset));
+                }
+            }
         }
 
         private void WriteParameter(MemoryBin bin, ref int offset, ArgumentType paramType, int param)
@@ -143,6 +181,26 @@ namespace SnesEmulator.Hardware.Instructions
                     offset += 3;
                     break;
             }
+        }
+
+        public void WriteEmulationToNativeMode(MemoryBin romBin, ref int writeOffset)
+        {
+            Write(romBin, ref writeOffset, OpCodes.CLC);
+            Write(romBin, ref writeOffset, OpCodes.XCE);
+
+            /* Histoire de préserver les changements de contexte */
+            if (enableInstructionValidation)
+                cpu.SwitchFromEmulationToNativeMode();
+        }
+
+        public void WriteNativeToEmulationMode(MemoryBin romBin, ref int writeOffset)
+        {
+            Write(romBin, ref writeOffset, OpCodes.SEC);
+            Write(romBin, ref writeOffset, OpCodes.XCE);
+
+            /* Histoire de préserver les changements de contexte */
+            if (enableInstructionValidation)
+                cpu.SwitchFromNativeToEmulationMode();
         }
     }
 }

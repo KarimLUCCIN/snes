@@ -20,6 +20,8 @@ namespace SnesEmulator.Tests
             snes.Interpreter.RethrowExecutionExceptions = true;
             snes.Interpreter.Trace = true;
 
+            snes.Encoder.EnableInstructionValidation = true;
+
             writeOffset = 0;
         }
 
@@ -152,6 +154,70 @@ namespace SnesEmulator.Tests
             {
                 Assert.AreEqual(false, snes.CPU.DecimalFlag);
             });
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
+            snes.Interpreter.Interpret(romBin, 0, false);
+        }
+
+        [TestMethod]
+        public void TestBIT()
+        {
+            /*  On test ça :
+             
+               >emul<
+             
+               LDA #$[bit: 11000000]
+               STA $01
+               LDA #$0
+               BIT $01
+               [Check(n = 1, v = 1, z = 1)]
+               STZ $01
+               BIT $01
+               [Check(n = 0, v = 0, z = 1)]
+               LDA #$[bit: 01000000]
+               STA $04
+               BIT $04
+               [Check(n = 0, v = 1, z = 0)]
+               STP
+            * */
+
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            snes.Encoder.WriteNativeToEmulationMode(romBin, ref writeOffset);
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, (1 << 7) | (1 << 6));
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STA, AddressingModes.AbsoluteLong, ArgumentType.I3, 1);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.BIT, AddressingModes.Absolute, ArgumentType.I2, 1);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(true, snes.CPU.ZeroFlag);
+                Assert.AreEqual(true, snes.CPU.OverflowFlag);
+                Assert.AreEqual(true, snes.CPU.NegativeFlag);
+            });
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STZ, AddressingModes.Absolute, ArgumentType.I2, 1);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.BIT, AddressingModes.Absolute, ArgumentType.I2, 1);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(true, snes.CPU.ZeroFlag);
+                Assert.AreEqual(false, snes.CPU.OverflowFlag);
+                Assert.AreEqual(false, snes.CPU.NegativeFlag);
+            });
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, (1 << 6));
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STA, AddressingModes.AbsoluteLong, ArgumentType.I3, 4);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.BIT, AddressingModes.Absolute, ArgumentType.I2, 4);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(false, snes.CPU.ZeroFlag);
+                Assert.AreEqual(true, snes.CPU.OverflowFlag);
+                Assert.AreEqual(false, snes.CPU.NegativeFlag);
+            });
+
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
             snes.Interpreter.Interpret(romBin, 0, false);
         }
@@ -323,8 +389,7 @@ namespace SnesEmulator.Tests
 
             InitTestContext(out snes, out romBin, out writeOffset);
 
-            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.CLC);
-            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.XCE);
+            snes.Encoder.WriteEmulationToNativeMode(romBin, ref writeOffset);
 
             var testValues = new[] { 10, 20, 30, 0xF7, 40 };
 
@@ -335,11 +400,9 @@ namespace SnesEmulator.Tests
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0x13);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PHA, AddressingModes.StackRelative);
-            
 
 
-            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.SEC);
-            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.XCE);
+            snes.Encoder.WriteNativeToEmulationMode(romBin, ref writeOffset);
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.PLA);
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
