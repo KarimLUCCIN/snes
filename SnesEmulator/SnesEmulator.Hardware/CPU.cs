@@ -395,6 +395,87 @@ namespace SnesEmulator.Hardware
             context.XFlag = XFlag;
         }
 
+        #region BlockMove
+
+        static byte[] blockmove_buffer = null;
+
+        /// <summary>
+        /// Copie la mémoire d'une location à une autre,
+        /// tout en s'arrangeant pour préserver les effets de bords présents sur la SNES d'origine
+        /// </summary>
+        /// <param name="src_addr">Addresse de d'origine</param>
+        /// <param name="dst_addr">Addresse de destination</param>
+        /// <param name="count">Nombre de bytes réels à copier</param>
+        /// <param name="reverse">true pour simuler un MVP, false pour un MVN</param>
+        public void BlockMove(int src_addr, int dst_addr, short count, bool reverse)
+        {
+            /*
+             * Dans le principe, en normal on copie de src vers dst byte à byte en normal,
+             * et de la fin vers le début en reverse.
+             * 
+             * Bien que dans le MVN et MVP il faille copier un byte de plus,
+             * c'est à l'appelant de se charger de ce détail
+             * */
+
+            /* Cas de compability : y a t il un chevauchement ? */
+            if ((src_addr + count > dst_addr && src_addr < dst_addr) ||
+                (dst_addr < src_addr && dst_addr + count > src_addr))
+            {
+                /* Chevauchement, on émule pour la compatibility */
+                BlockMove_Compatibility(src_addr, dst_addr, count, reverse);
+            }
+            else
+            {
+                /* Pas de chevauchement, full speed */
+                if (blockmove_buffer == null || blockmove_buffer.Length < count)
+                {
+                    Debug.WriteLine(String.Format("BlockMove Buffer Allocation : {0}", count));
+                    blockmove_buffer = new byte[count];
+                }
+
+                if (RAM.Read(src_addr, blockmove_buffer, 0, count) != count)
+                    throw new InvalidOperationException("Tentative de lecture ou d'écriture au delà de l'espace alloué");
+                
+                RAM.Write(dst_addr, blockmove_buffer, 0, count);
+            }
+
+        }
+
+        private void BlockMove_Compatibility(int src_addr, int dst_addr, short count, bool reverse)
+        {
+            byte v;
+
+            if (!reverse)
+            {
+                while (count > 0)
+                {
+                    v = RAM.ReadInt1(src_addr);
+                    RAM.WriteInt1(dst_addr, v);
+
+                    src_addr++;
+                    dst_addr++;
+                    count--;
+                }
+            }
+            else
+            {
+                src_addr += count;
+                dst_addr += count;
+
+                while (count > 0)
+                {
+                    v = RAM.ReadInt1(src_addr);
+                    RAM.WriteInt1(dst_addr, v);
+
+                    src_addr--;
+                    dst_addr--;
+                    count--;
+                }
+            }
+        }
+
+        #endregion
+
         #region Stack
 
         public void StackPush(int value, ArgumentType argType)
