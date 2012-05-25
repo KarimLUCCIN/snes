@@ -228,8 +228,10 @@ namespace SnesEmulator.Tests
             /*  On test ça :
                LDA #$03 
                TAY
+               INY
                TYX
-               [Check(X == 3)]
+               INX
+               [Check(X == 5)]
                TSX
                TXY
                TYA
@@ -244,10 +246,12 @@ namespace SnesEmulator.Tests
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 3);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TAY);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.INY);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TYX);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.INX);
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
             {
-                Assert.AreEqual(3, snes.CPU.X);
+                Assert.AreEqual(5, snes.CPU.X);
             });
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TSX);

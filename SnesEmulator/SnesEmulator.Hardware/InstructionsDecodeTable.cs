@@ -203,8 +203,8 @@ namespace SnesEmulator.Hardware
             // CLEAR
             RegisterKnownInstruction(0x18, GenericInst(Hardware.OpCodes.CLC, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.CarryFlag = false; }));
             RegisterKnownInstruction(0xD8, GenericInst(Hardware.OpCodes.CLD, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.DecimalFlag = false; }));
-            RegisterKnownInstruction(0x58, GenericInst(Hardware.OpCodes.CLI, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0xB8, GenericInst(Hardware.OpCodes.CLV, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));
+            RegisterKnownInstruction(0x58, GenericInst(Hardware.OpCodes.CLI, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.IRQDisabledFlag = false; }));
+            RegisterKnownInstruction(0xB8, GenericInst(Hardware.OpCodes.CLV, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.OverflowFlag = false; }));
 
             // CMP
             Action<Instruction, int, int> operation_CMP = (Instruction sender, int p1, int p2) =>
@@ -310,8 +310,8 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0xFE, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
 
             // INX & INY
-            RegisterKnownInstruction(0xE8, GenericInst(Hardware.OpCodes.INX, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0xC8, GenericInst(Hardware.OpCodes.INY, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));
+            RegisterKnownInstruction(0xE8, GenericInst(Hardware.OpCodes.INX, Hardware.AddressingModes.Implied, (sender, p1, p2) => { CPU_LoadInto(ref cpu.X, cpu.X + 1); }));
+            RegisterKnownInstruction(0xC8, GenericInst(Hardware.OpCodes.INY, Hardware.AddressingModes.Implied, (sender, p1, p2) => { CPU_LoadInto(ref cpu.Y, cpu.Y + 1); }));
 
             // JMP
             RegisterKnownInstruction(0x4c, new InstructionJMP(cpu, Hardware.AddressingModes.Absolute));
@@ -488,7 +488,7 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0xF8, GenericInst(Hardware.OpCodes.SED, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.DecimalFlag = true; }));
 
             // SEI
-            RegisterKnownInstruction(0x78, GenericInst(Hardware.OpCodes.SEI, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));
+            RegisterKnownInstruction(0x78, GenericInst(Hardware.OpCodes.SEI, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.IRQDisabledFlag = true; }));
 
             // SEP
             RegisterKnownInstruction(0xE2, GenericInst(Hardware.OpCodes.SEP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
