@@ -278,8 +278,8 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0xDE, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
 
             // DEX & DEY
-            RegisterKnownInstruction(0xCA, GenericInst(Hardware.OpCodes.DEX, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0x88, GenericInst(Hardware.OpCodes.DEY, Hardware.AddressingModes.Implied, (sender, p1, p2) => { throw new NotImplementedException(); }));
+            RegisterKnownInstruction(0xCA, GenericInst(Hardware.OpCodes.DEX, Hardware.AddressingModes.Implied, (sender, p1, p2) => { CPU_LoadInto(ref cpu.X, cpu.X - 1); }));
+            RegisterKnownInstruction(0x88, GenericInst(Hardware.OpCodes.DEY, Hardware.AddressingModes.Implied, (sender, p1, p2) => { CPU_LoadInto(ref cpu.Y, cpu.Y - 1); }));
 
             // EOR
             RegisterKnownInstruction(0x41, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.DirectIndexedIndirect, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));

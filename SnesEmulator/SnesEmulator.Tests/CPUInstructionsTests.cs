@@ -233,9 +233,11 @@ namespace SnesEmulator.Tests
                INX
                [Check(X == 5)]
                TSX
+               DEX
                TXY
+               DEY
                TYA
-               [Check(ACC == SP)]
+               [Check(ACC == SP - 2)]
                STP
             * */
             SnesPlatform snes;
@@ -255,11 +257,13 @@ namespace SnesEmulator.Tests
             });
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TSX);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.DEX);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TXY);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.DEY);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TYA);
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
             {
-                Assert.AreEqual(snes.CPU.SP, snes.CPU.ACC);
+                Assert.AreEqual(snes.CPU.SP - 2, snes.CPU.ACC);
             });
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP);
