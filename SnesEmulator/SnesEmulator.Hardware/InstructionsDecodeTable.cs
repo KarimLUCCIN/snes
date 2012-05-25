@@ -292,25 +292,21 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x88, GenericInst(Hardware.OpCodes.DEY, Hardware.AddressingModes.Implied, (sender, p1, p2) => { CPU_LoadInto(ref cpu.Y, cpu.Y - 1); }));
 
             // EOR
-            RegisterKnownInstruction(0x41, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.DirectIndexedIndirect, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x43, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x45, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x47, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.DirectIndirectLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x49, GenericInstCustom(OpCodes.EOR, AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { throw new NotImplementedException(); },
-                (GenericInstruction.DecodeArgumentsFunctionDelegate)delegate(GenericInstruction sender, Memory.MemoryBin bin, ref InstructionDecodeContext context, ref int offset, ref int p1, ref int p2)
-                {
-                    p1 = sender.DecodeI1I2ArgumentForMFlag(bin, ref offset, ref context);
-                }));
-            RegisterKnownInstruction(0x4D, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0x4F, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.AbsoluteLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I3));
-            RegisterKnownInstruction(0x51, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.DirectIndirectIndexed, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x52, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.DirectIndirect, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x53, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.StackRelativeIndirectIndexed, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x55, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.DirectIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x57, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.DirectIndirectIndexedLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0x59, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.AbsoluteIndexedY, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0x5D, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0x5F, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.AbsoluteIndexedLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I3));
+            RegisterKnownInstruction(0x41, new InstructionEOR(cpu, Hardware.AddressingModes.DirectIndexedIndirect));
+            RegisterKnownInstruction(0x43, new InstructionEOR(cpu, Hardware.AddressingModes.StackRelative));
+            RegisterKnownInstruction(0x45, new InstructionEOR(cpu, Hardware.AddressingModes.Direct));
+            RegisterKnownInstruction(0x47, new InstructionEOR(cpu, Hardware.AddressingModes.DirectIndirectLong));
+            RegisterKnownInstruction(0x49, new InstructionEOR(cpu, Hardware.AddressingModes.ImmediateMemoryFlag));
+            RegisterKnownInstruction(0x4D, new InstructionEOR(cpu, Hardware.AddressingModes.Absolute));
+            RegisterKnownInstruction(0x4F, new InstructionEOR(cpu, Hardware.AddressingModes.AbsoluteLong));
+            RegisterKnownInstruction(0x51, new InstructionEOR(cpu, Hardware.AddressingModes.DirectIndirectIndexed));
+            RegisterKnownInstruction(0x52, new InstructionEOR(cpu, Hardware.AddressingModes.DirectIndirect));
+            RegisterKnownInstruction(0x53, new InstructionEOR(cpu, Hardware.AddressingModes.StackRelativeIndirectIndexed));
+            RegisterKnownInstruction(0x55, new InstructionEOR(cpu, Hardware.AddressingModes.DirectIndexedX));
+            RegisterKnownInstruction(0x57, new InstructionEOR(cpu, Hardware.AddressingModes.DirectIndirectIndexedLong));
+            RegisterKnownInstruction(0x59, new InstructionEOR(cpu, Hardware.AddressingModes.AbsoluteIndexedY));
+            RegisterKnownInstruction(0x5D, new InstructionEOR(cpu, Hardware.AddressingModes.AbsoluteIndexedX));
+            RegisterKnownInstruction(0x5F, new InstructionEOR(cpu, Hardware.AddressingModes.AbsoluteIndexedLong));
 
             // INC
             RegisterKnownInstruction(0x1A, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.ImpliedAccumulator, (sender, p1, p2) => { CPU_LoadInto(ref cpu.ACC, cpu.ACC + 1); }));
@@ -455,7 +451,7 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x7A, GenericInst(Hardware.OpCodes.PLY, Hardware.AddressingModes.StackRelative, (sender, p1, p2) => { CPU_LoadInto(ref cpu.Y, cpu.StackPull(cpu.CurrentRegisterSize)); }));
 
             // REP
-            RegisterKnownInstruction(0xC2, GenericInst(Hardware.OpCodes.REP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
+            RegisterKnownInstruction(0xC2, GenericInst(Hardware.OpCodes.REP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { cpu.P = (byte)(cpu.P & (((1 << 8) - 1) ^ p1)); }, ArgumentType.I1));
 
             // ROL
             RegisterKnownInstruction(0x26, GenericInst(Hardware.OpCodes.ROL, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
@@ -503,7 +499,7 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x78, GenericInst(Hardware.OpCodes.SEI, Hardware.AddressingModes.Implied, (sender, p1, p2) => { cpu.IRQDisabledFlag = true; }));
 
             // SEP
-            RegisterKnownInstruction(0xE2, GenericInst(Hardware.OpCodes.SEP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
+            RegisterKnownInstruction(0xE2, GenericInst(Hardware.OpCodes.SEP, Hardware.AddressingModes.ImmediateMemoryFlag, (sender, p1, p2) => { cpu.P = (byte)(cpu.P & p1); }, ArgumentType.I1));
 
             // STA
             Action<Instruction, int, int> operation_STA = (Instruction sender, int p1, int p2) =>

@@ -339,6 +339,74 @@ namespace SnesEmulator.Tests
         }
 
         [TestMethod]
+        public void TestComparisonsTables()
+        {
+            SnesPlatform snes;
+            MemoryBin romBin;
+            int writeOffset;
+
+            InitTestContext(out snes, out romBin, out writeOffset);
+
+            snes.Encoder.WriteEmulationToNativeMode(romBin, ref writeOffset);
+
+            /* 16bits acc, 8bits x & y */
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.REP, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0x20);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Debug.WriteLine(String.Format("P : {0}", snes.CPU.P));
+            });
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.SEP, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 0x10);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Debug.WriteLine(String.Format("P : {0}", snes.CPU.P));
+            });
+
+            var testTables = new[]{
+                new {A = 0, B = 0, OR = 0, EOR = 0, AND = 0},
+                new {A = 0, B = 1, OR = 1, EOR = 1, AND = 0},
+                new {A = 1, B = 0, OR = 1, EOR = 1, AND = 0},
+                new {A = 1, B = 1, OR = 1, EOR = 0, AND = 1},
+            };
+
+            /* for code validation */
+            snes.CPU.SwitchFromEmulationToNativeMode();
+            snes.CPU.MFlag = false;
+            snes.CPU.XFlag = true;
+
+            foreach (var t_entry in testTables)
+            {
+                var entry = t_entry;
+
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I2, entry.A);
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STA, AddressingModes.Absolute, ArgumentType.I2, 0);
+
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I2, entry.B);
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.ORA, AddressingModes.Absolute, ArgumentType.I2, 0);
+                snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+                {
+                    Assert.AreEqual(entry.OR, snes.CPU.ACC);
+                });
+
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I2, entry.B);
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.EOR, AddressingModes.Absolute, ArgumentType.I2, 0);
+                snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+                {
+                    Assert.AreEqual(entry.EOR, snes.CPU.ACC);
+                });
+
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I2, entry.B);
+                snes.Encoder.Write(romBin, ref writeOffset, OpCodes.AND, AddressingModes.Absolute, ArgumentType.I2, 0);
+                snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+                {
+                    Assert.AreEqual(entry.AND, snes.CPU.ACC);
+                });
+            }
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STP, AddressingModes.Implied);
+            snes.Interpreter.Interpret(romBin, 0, false);
+        }
+
+        [TestMethod]
         public void TestStackBasicOnCPU()
         {
             /*

@@ -126,7 +126,24 @@ namespace SnesEmulator.Hardware
             (0 = 16-bit, 1 = 8-bit)
             E			6502 emulation mode
             B	#$10	00010000	Break (emulation mode only)
-
+         * 
+         * 
+         * --- in order ---
+         * 
+         * 
+            N	#$80	10000000	Negative
+            V	#$40	01000000	Overflow
+            M	#$20	00100000	Accumulator register size (native mode only)
+            B	#$10	00010000	Break (emulation mode only)
+            X	#$10	00010000	Index register size (native mode only)
+            D	#$08	00001000	Decimal
+            I	#$04	00000100	IRQ disable
+            Z	#$02	00000010	Zero
+            C	#$01	00000001	Carry
+            (0 = 16-bit, 1 = 8-bit)
+            (0 = 16-bit, 1 = 8-bit)
+            E			6502 emulation mode
+         
          */
 
         /// <summary>
