@@ -55,6 +55,8 @@
     <Compile Include="Instructions\InstructionReference.cs" />
     <Compile Include="Instructions\InstructionsBin.cs" />
     <Compile Include="Instructions\InstructionsDecoder.cs" />
+    <Compile Include="Instructions\InstructionsSets\InstructionORA.cs" />
+    <Compile Include="Instructions\InstructionsSets\InstructionSBC.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionWDM.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionADC.cs" />
     <Compile Include="Instructions\InstructionsSets\InstructionInvalid.cs" />
