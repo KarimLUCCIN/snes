@@ -227,11 +227,17 @@ namespace SnesEmulator.Tests
         {
             /*  On test ça :
                LDA #$03 
+               INC_A
                TAY
                INY
                TYX
                INX
-               [Check(X == 5)]
+               [Check(X == 6)]
+               STX $8
+               INC $8
+               INC $8
+               LDA $8
+               [Check(A == 8)]
                TSX
                DEX
                TXY
@@ -247,13 +253,23 @@ namespace SnesEmulator.Tests
             InitTestContext(out snes, out romBin, out writeOffset);
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.ImmediateMemoryFlag, ArgumentType.I1, 3);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.INC, AddressingModes.ImpliedAccumulator);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TAY);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.INY);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TYX);
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.INX);
             snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
             {
-                Assert.AreEqual(5, snes.CPU.X);
+                Assert.AreEqual(6, snes.CPU.X);
+            });
+
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.STX, AddressingModes.Absolute, ArgumentType.I2, 8);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.INC, AddressingModes.Absolute, ArgumentType.I2, 8);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.INC, AddressingModes.Absolute, ArgumentType.I2, 8);
+            snes.Encoder.Write(romBin, ref writeOffset, OpCodes.LDA, AddressingModes.Absolute, ArgumentType.I2, 8);
+            snes.Encoder.WriteCallbackInvoke(romBin, ref writeOffset, delegate
+            {
+                Assert.AreEqual(8, snes.CPU.ACC);
             });
 
             snes.Encoder.Write(romBin, ref writeOffset, OpCodes.TSX);
@@ -276,7 +292,7 @@ namespace SnesEmulator.Tests
             /*  On test ça :
                 LDA #$03 
                 STA $7E0001
-                LDA #0
+                LDA #$0
                 ADC $7E0001
                 ADC $7E0001
                 [Check(A == 6)]

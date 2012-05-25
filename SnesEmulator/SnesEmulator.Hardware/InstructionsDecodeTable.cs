@@ -271,11 +271,21 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0xCC, GenericInst(Hardware.OpCodes.CPY, Hardware.AddressingModes.Absolute, operation_CPY, ArgumentType.I2));
 
             // DEC
-            RegisterKnownInstruction(0x3A, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.ImpliedAccumulator, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0xC6, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0xCE, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0xD6, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.DirectIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0xDE, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
+            RegisterKnownInstruction(0x3A, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.ImpliedAccumulator, (sender, p1, p2) => { CPU_LoadInto(ref cpu.ACC, cpu.ACC - 1); }));
+
+            Action<Instruction, int, int> operation_DEC = (Instruction sender, int p1, int p2) =>
+            {
+                var addr = sender.ResolveAddress(p1);
+                var value = sender.ReadAddressedValue(p1) - 1;
+                sender.WriteAddressedValue(addr, value);
+                cpu.SetNegativeFlag(value);
+                cpu.SetZeroFlag(value);
+            };
+
+            RegisterKnownInstruction(0xC6, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.Direct, operation_DEC, ArgumentType.I1));
+            RegisterKnownInstruction(0xCE, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.Absolute, operation_DEC, ArgumentType.I2));
+            RegisterKnownInstruction(0xD6, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.DirectIndexedX, operation_DEC, ArgumentType.I1));
+            RegisterKnownInstruction(0xDE, GenericInst(Hardware.OpCodes.DEC, Hardware.AddressingModes.AbsoluteIndexedX, operation_DEC, ArgumentType.I2));
 
             // DEX & DEY
             RegisterKnownInstruction(0xCA, GenericInst(Hardware.OpCodes.DEX, Hardware.AddressingModes.Implied, (sender, p1, p2) => { CPU_LoadInto(ref cpu.X, cpu.X - 1); }));
@@ -303,11 +313,21 @@ namespace SnesEmulator.Hardware
             RegisterKnownInstruction(0x5F, GenericInst(Hardware.OpCodes.EOR, Hardware.AddressingModes.AbsoluteIndexedLong, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I3));
 
             // INC
-            RegisterKnownInstruction(0x1A, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.ImpliedAccumulator, (sender, p1, p2) => { throw new NotImplementedException(); }));
-            RegisterKnownInstruction(0xE6, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.Direct, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0xEE, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.Absolute, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
-            RegisterKnownInstruction(0xF6, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.DirectIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I1));
-            RegisterKnownInstruction(0xFE, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.AbsoluteIndexedX, (sender, p1, p2) => { throw new NotImplementedException(); }, ArgumentType.I2));
+            RegisterKnownInstruction(0x1A, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.ImpliedAccumulator, (sender, p1, p2) => { CPU_LoadInto(ref cpu.ACC, cpu.ACC + 1); }));
+
+            Action<Instruction, int, int> operation_INC = (Instruction sender, int p1, int p2) =>
+            {
+                var addr = sender.ResolveAddress(p1);
+                var value = sender.ReadAddressedValue(p1)+1;
+                sender.WriteAddressedValue(addr, value);
+                cpu.SetNegativeFlag(value);
+                cpu.SetZeroFlag(value);
+            };
+
+            RegisterKnownInstruction(0xE6, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.Direct, operation_INC, ArgumentType.I1));
+            RegisterKnownInstruction(0xEE, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.Absolute, operation_INC, ArgumentType.I2));
+            RegisterKnownInstruction(0xF6, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.DirectIndexedX, operation_INC, ArgumentType.I1));
+            RegisterKnownInstruction(0xFE, GenericInst(Hardware.OpCodes.INC, Hardware.AddressingModes.AbsoluteIndexedX, operation_INC, ArgumentType.I2));
 
             // INX & INY
             RegisterKnownInstruction(0xE8, GenericInst(Hardware.OpCodes.INX, Hardware.AddressingModes.Implied, (sender, p1, p2) => { CPU_LoadInto(ref cpu.X, cpu.X + 1); }));
